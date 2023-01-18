@@ -21,7 +21,6 @@ class HFTrainer(transformers.trainer.Trainer):
         self.loss = loss
         self.customed_log = defaultdict(lambda: 0.0)
         self.tokenizer = self.data_collator.tokenizer
-        self.model = torch.compile(self.model)
 
     def _maybe_log_save_evaluate(
         self, tr_loss, model, trial, epoch, ignore_keys_for_eval

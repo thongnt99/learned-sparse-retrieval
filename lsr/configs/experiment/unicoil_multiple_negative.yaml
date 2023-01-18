@@ -6,8 +6,6 @@ defaults:
 exp_name: unicoil_multiple_negative 
 data_collator:
   _target_: lsr.datasets.data_collator.PretokenizedGroupCollator
-trainer: 
-  data_type: multi-negative
 training_arguments:
   fp16: True 
   per_device_train_batch_size: 8 

@@ -59,7 +59,6 @@ inference_arguments:
 trainer: 
   _target_: lsr.trainer.HFTrainer
   model: ${model}
-  data_type: triple 
   args: ${training_arguments}
   data_collator: ${data_collator}
   train_dataset: ${train_dataset}

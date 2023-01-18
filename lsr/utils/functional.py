@@ -36,7 +36,7 @@ class AllOne(nn.Module):
 class FunctionalFactory:
     name2class = {
         "log1p": Log1P,
-        "no": NoNorm,
+        "identity": NoNorm,
         "relu": nn.ReLU,
         "softplus": nn.Softplus,
     }

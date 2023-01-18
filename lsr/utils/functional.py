@@ -38,7 +38,7 @@ class FunctionalFactory:
         "log1p": Log1P,
         "no": NoNorm,
         "relu": nn.ReLU,
-        "softplus": nn.SoftPlus,
+        "softplus": nn.Softplus,
     }
 
     def get(self, name):

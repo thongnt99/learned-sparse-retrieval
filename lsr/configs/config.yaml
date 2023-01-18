@@ -1,0 +1,74 @@
+defaults:
+  - _self_ 
+  - model: splade
+  - dataset@train_dataset: toy_triplets
+  - loss: triplet_margin
+  - wandb: defaults
+
+exp_name: 'toy_triplets'
+query_max_length: 250
+doc_max_length: 250
+tokenizer:
+  _target_: lsr.tokenizer.HFTokenizer
+  tokenizer_name: distilbert-base-uncased
+
+data_collator:
+  _target_: lsr.datasets.data_collator.DataCollator
+  tokenizer: ${tokenizer}
+  q_max_length: ${query_max_length}
+  d_max_length: ${doc_max_length}
+
+training_arguments:
+  _target_: transformers.TrainingArguments
+  output_dir: ./outputs/${exp_name}
+  overwrite_output_dir: True 
+  remove_unused_columns: False 
+  do_train: True
+  evaluation_strategy: 'no'
+  log_level: info 
+  logging_steps: 500
+  per_device_train_batch_size: 128
+  max_steps: 150000
+  # num_train_epochs: 30
+  save_strategy: "steps" 
+  save_steps: 20000
+  warmup_steps: 6000
+  fp16: True
+  report_to: wandb 
+  dataloader_num_workers: 16
+  dataloader_drop_last: True
+  run_name: ${exp_name}$
+  ignore_data_skip: False
+  ddp_find_unused_parameters: False
+  seed: 42
+
+inference_arguments:
+  model_path: ${training_arguments.output_dir}/model
+  input_path: data/toy-data/train_queries/raw.tsv
+  input_format: tsv
+  dataset: inference
+  type: query
+  output_dir: ${training_arguments.output_dir}/${inference_arguments.dataset}/${inference_arguments.type}
+  output_file: ???
+  fp16: True
+  input_max_length: 250
+  top_k: -1
+  ngram_top_k: 200
+  batch_size: 256
+  scale_factor: 100
+trainer: 
+  _target_: lsr.trainer.HFTrainer
+  model: ${model}
+  data_type: triple 
+  args: ${training_arguments}
+  data_collator: ${data_collator}
+  train_dataset: ${train_dataset}
+  loss: ${loss}
+  train_only_bias_and_layer_norm: False
+
+hydra:
+  job:
+    chdir: False 
+  run:
+    dir: ${training_arguments.output_dir}
+resume_from_checkpoint: False

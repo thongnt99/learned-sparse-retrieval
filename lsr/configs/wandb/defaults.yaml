@@ -1,0 +1,8 @@
+---
+setup:
+  project: lsr-framework
+  entity:
+  mode: online
+watch:
+    log: all
+    log_freq: 100

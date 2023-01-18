@@ -1,4 +1,4 @@
-from lsr.models import SparseEncoder
+from lsr.models.sparse_encoder import SparseEncoder
 from lsr.utils.functional import FunctionalFactory
 from lsr.utils.sparse_rep import SparseRep
 from transformers import AutoModel

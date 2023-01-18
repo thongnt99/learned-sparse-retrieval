@@ -1,4 +1,4 @@
-from lsr.models import SparseEncoder
+from lsr.models.sparse_encoder import SparseEncoder
 from lsr.utils import functional
 from lsr.utils.functional import FunctionalFactory
 from lsr.utils.pooling import PoolingFactory

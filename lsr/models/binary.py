@@ -1,4 +1,4 @@
-from lsr.models import SparseEncoder
+from lsr.models.sparse_encoder import SparseEncoder
 from lsr.utils.sparse_rep import SparseRep
 from torch import nn
 import torch
@@ -13,10 +13,7 @@ class BinaryEncoderConfig(PretrainedConfig):
     model_type = "BINARY"
 
     def __init__(
-        self,
-        vocab_size: int = 30522,
-        scale=0.3,
-        **kwargs,
+        self, vocab_size: int = 30522, scale=0.3, **kwargs,
     ):
         """
         Construct a configuration for Binary Encoder
@@ -60,8 +57,4 @@ class BinaryEncoder(SparseEncoder):
         size = torch.tensor(
             (input_ids.size(0), self.vocab_size), device=input_ids.device
         )
-        return SparseRep(
-            indices=input_ids,
-            values=bin_weights,
-            size=size,
-        )
+        return SparseRep(indices=input_ids, values=bin_weights, size=size,)

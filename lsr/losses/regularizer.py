@@ -47,8 +47,8 @@ class Regularizer(nn.Module):
 
 
 class FLOPs(Regularizer):
-    """Implementation of the FLOPs regularizer
-    A mooth approximation for number of term overlap between a query and a document.
+    """
+    Implementation of the FLOPs regularizer which is a mooth approximation for number of term overlap between a query and a document.
     Paper: https://arxiv.org/abs/2004.05665
     """
 
@@ -57,7 +57,9 @@ class FLOPs(Regularizer):
 
 
 class L1(Regularizer):
-    """Implementation of the L1 regularizer"""
+    """
+    Implementation of the L1 regularizer
+    """
 
     def forward(self, reps):
         return torch.abs(reps).sum(dim=1).mean() * self.weight_t

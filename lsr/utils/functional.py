@@ -1,5 +1,4 @@
 """Contains common normalization or activation function wrapped in class"""
-from lsr.models.mlm import EPICDocQuality, EPICTermImportance
 import torch
 from torch import nn
 

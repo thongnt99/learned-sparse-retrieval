@@ -6,3 +6,4 @@ setup:
 watch:
     log: all
     log_freq: 100
+resume: False 

@@ -2,10 +2,7 @@ import torch
 import os
 import transformers
 import logging
-from lsr.datasets.data_collator import DataCollator
 from lsr.models import DualSparseEncoder
-from lsr.utils import get_absolute_class_name
-from lsr.utils.sparse_rep import SparseRep
 from lsr.models import DualSparseEncoder
 from collections import defaultdict
 

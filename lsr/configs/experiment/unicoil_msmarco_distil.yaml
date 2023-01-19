@@ -1,0 +1,8 @@
+# @package _global_
+defaults:
+  - override /dataset@train_dataset: msmarco_triplet_distil
+  - override /loss: triplet_distil_margin_mse_no_reg
+  - override /model: unicoil
+exp_name: unicoil_distil_sentence_transformers 
+trainer: 
+  data_type: distil

@@ -1,0 +1,9 @@
+_target_: lsr.losses.MarginMSELoss
+q_regularizer: 
+  _target_: lsr.losses.regularizer.FLOPs
+  weight: 0.0
+  T: 50000
+d_regularizer:
+  _target_: lsr.losses.regularizer.FLOPs
+  weight: 0.0
+  T: 50000

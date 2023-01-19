@@ -4,5 +4,3 @@ defaults:
   - override /loss: distil_margin_mse
   - override /model: unicoil
 exp_name: unicoil_distil_sentence_transformers 
-trainer: 
-  data_type: distil

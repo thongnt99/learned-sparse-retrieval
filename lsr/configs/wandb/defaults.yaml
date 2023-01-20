@@ -1,6 +1,6 @@
 ---
 setup:
-  project: lsr-framework
+  project: lsr-framework-public
   entity:
   mode: online
 watch:

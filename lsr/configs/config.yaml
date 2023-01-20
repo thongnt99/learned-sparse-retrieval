@@ -63,8 +63,7 @@ trainer:
   data_collator: ${data_collator}
   train_dataset: ${train_dataset}
   loss: ${loss}
-  train_only_bias_and_layer_norm: False
-
+  
 hydra:
   job:
     chdir: False 

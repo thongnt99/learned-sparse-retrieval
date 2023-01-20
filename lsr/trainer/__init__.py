@@ -14,9 +14,7 @@ LOSS_NAME = "loss.pt"
 class HFTrainer(transformers.trainer.Trainer):
     """Customized Trainer from Huggingface's Trainer"""
 
-    def __init__(
-        self, *args, loss=None, train_only_bias_and_layer_norm=False, **kwargs
-    ) -> None:
+    def __init__(self, *args, loss=None, **kwargs) -> None:
         super(HFTrainer, self).__init__(*args, **kwargs)
         self.loss = loss
         self.customed_log = defaultdict(lambda: 0.0)

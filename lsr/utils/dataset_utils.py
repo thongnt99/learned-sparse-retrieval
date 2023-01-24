@@ -2,6 +2,7 @@ from tqdm import tqdm
 import ir_datasets
 import json
 from datasets import DownloadManager
+from collections import defaultdict
 import gzip
 import pickle
 
@@ -90,6 +91,8 @@ def read_ce_score(ce_path: str):
 
 def read_triplets(triplet_path: str):
     triplets = []
+    query2pos = defaultdict(list)
+    query2neg = defaultdict(list)
     if triplet_path.startswith(IRDS_PREFIX):
         irds_name = triplet_path.replace(IRDS_PREFIX, "")
         dataset = ir_datasets.load(irds_name)
@@ -98,13 +101,14 @@ def read_triplets(triplet_path: str):
         ):
             qid, pos_id, neg_id = docpair.query_id, docpair.doc_id_a, docpair.doc_id_b
             triplets.append((qid, pos_id, neg_id))
+            query2pos[qid].append(pos_id)
+            query2neg[qid].append(neg_id)
     else:
         with open(triplet_path) as f:
             for line in tqdm(f, desc=f"Reading triplets from {triplet_path}"):
                 qid, pos_id, neg_id = line.strip().split("\t")
-                try:
-                    triplets.append((qid, pos_id, neg_id))
-                except:
-                    pass
-    return triplets
+                triplets.append((qid, pos_id, neg_id))
+                query2pos[qid].append(pos_id)
+                query2neg[qid].append(neg_id)
+    return triplets, query2pos, query2neg
 

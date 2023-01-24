@@ -16,7 +16,7 @@ def read_collection(collection_path: str, text_fields=["text"]):
         dataset = ir_datasets.load(irds_name)
         for doc in tqdm(
             dataset.docs_iter(),
-            desc=f"Loading doc collection for ir_datasets: {irds_name}",
+            desc=f"Loading doc collection from ir_datasets: {irds_name}",
         ):
             doc_id = doc.doc_id
             texts = [getattr(doc, field) for field in text_fields]
@@ -36,7 +36,8 @@ def read_queries(queries_path: str, text_fields=["text"]):
         irds_name = queries_path.replace(IRDS_PREFIX, "")
         dataset = ir_datasets.load(irds_name)
         for query in tqdm(
-            dataset.queries_iter(), desc=f"Reading queries from {queries_path}"
+            dataset.queries_iter(),
+            desc=f"Loading queries from ir_datasets: {queries_path}",
         ):
             query_id = query.query_id
             texts = [getattr(query, field) for field in text_fields]

@@ -54,7 +54,7 @@ class TripletIDDistilDataset(Dataset):
         self.train_group_size = train_group_size
 
     def __len__(self):
-        return len(self.q_dict)
+        return len(self.queries)
 
     def __getitem__(self, idx):
         q_id, q_text = self.queries[idx]

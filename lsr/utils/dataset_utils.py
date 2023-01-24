@@ -18,7 +18,6 @@ def read_collection(collection_path: str, text_fields=["text"]):
             dataset.docs_iter(),
             desc=f"Loading doc collection for ir_datasets: {irds_name}",
         ):
-            doc = dict(doc)
             doc_id = doc.doc_id
             texts = [getattr(doc, field) for field in text_fields]
             text = " ".join(texts)

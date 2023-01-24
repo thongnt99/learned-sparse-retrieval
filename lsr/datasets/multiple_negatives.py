@@ -18,13 +18,13 @@ class MultipleNegatives(Dataset):
         train_group_size: int,
     ):
         self.docs_dict = read_collection(collection_path)
-        self.qids = list(self.q_dict.keys())
         _, self.query2pos, self.query2neg = read_triplets(triplet_ids_path)
         self.q_dict = {
             item[0]: item[1]
             for item in read_queries(queries_path)
             if item[0] in self.query2pos
         }
+        self.qids = list(self.q_dict.keys())
         self.train_group_size = train_group_size
 
     def __len__(self):

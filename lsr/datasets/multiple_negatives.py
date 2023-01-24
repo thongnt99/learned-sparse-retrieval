@@ -6,7 +6,11 @@ from collections import defaultdict
 
 class MultipleNegatives(Dataset):
     def __init__(
-        self, collection_path, queries_path, triplet_ids_path, train_group_size: int,
+        self,
+        collection_path: str,
+        queries_path: str,
+        triplet_ids_path: str,
+        train_group_size: int,
     ):
         self.docs_dict = read_collection(collection_path)
         self.q_dict = dict(read_queries(queries_path))

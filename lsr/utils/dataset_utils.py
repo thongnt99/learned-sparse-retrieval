@@ -65,7 +65,7 @@ def read_qrels(qrels_path: str, rel_threshold=0):
     else:
         qrels = json.load(open(qrels_path, "r"))
         for qid in qrels:
-            qid2pos[qid] = list(qrels[qid].keys())
+            qid2pos[str(qid)] = [str(did) for did in qrels[qid]]
     return qid2pos
 
 

@@ -1,5 +1,10 @@
 import random
-from lsr.utils.dataset_utils import read_collection, read_queries, read_triplets
+from lsr.utils.dataset_utils import (
+    read_collection,
+    read_qrels,
+    read_queries,
+    read_triplets,
+)
 from torch.utils.data import Dataset
 from collections import defaultdict
 
@@ -9,18 +14,17 @@ class MultipleNegatives(Dataset):
         self,
         collection_path: str,
         queries_path: str,
+        qrels_path: str,
         triplet_ids_path: str,
         train_group_size: int,
     ):
         self.docs_dict = read_collection(collection_path)
         self.q_dict = dict(read_queries(queries_path))
         self.qids = list(self.q_dict.keys())
-        self.triplets = read_triplets(triplet_ids_path)
-        self.query2pos = defaultdict(list)
-        self.query2neg = defaultdict(list)
-        for qid, pos_id, neg_id in self.triplets:
-            self.query2pos[qid].append(pos_id)
-            self.query2neg[qid].append(neg_id)
+        qrels = read_qrels(qrels_path)
+        _, self.query2pos, self.query2neg = read_triplets(triplet_ids_path)
+        for qid in qrels:
+            self.query2pos[qid] = list(set(qrels[qid] + self.query2pos[qid]))
         self.train_group_size = train_group_size
 
     def __len__(self):

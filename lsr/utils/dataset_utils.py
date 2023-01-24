@@ -54,7 +54,7 @@ def read_queries(queries_path: str, text_fields=["text"]):
 def read_qrels(qrels_path: str, rel_threshold=0):
     qid2pos = {}
     if qrels_path.startswith(IRDS_PREFIX):
-        irds_name = qrels_path.repalce(IRDS_PREFIX, "")
+        irds_name = qrels_path.replace(IRDS_PREFIX, "")
         dataset = ir_datasets.load(irds_name)
         for qrel in dataset.qrels_iter():
             if qrel.relevance > rel_threshold:

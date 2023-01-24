@@ -1,9 +1,17 @@
 import json
 from torch.utils.data import Dataset
+import ir_datasets
 from tqdm import tqdm
 import gzip
 import pickle
 import random
+
+from lsr.utils.dataset_utils import (
+    read_collection,
+    read_queries,
+    read_qrels,
+    read_ce_score,
+)
 
 
 class TripletDistilDataset(Dataset):
@@ -27,55 +35,31 @@ class TripletDistilDataset(Dataset):
 
 class TripletIDDistilDataset(Dataset):
     """
-    Dataset with hard negatives and teacher's scores for distillation
-    Link to the dataset used in this framework: https://download.europe.naverlabs.com/splade/sigir22/data.tar.gz
+    Dataset with teacher's scores for distillation
     """
 
     def __init__(
         self,
-        collection_path,
-        queries_path,
-        qrels_path,
-        ce_score_dict,
-        expansion_dict=None,
+        collection_path: str,
+        queries_path: str,
+        qrels_path: str,
+        ce_score_dict: str,
         train_group_size=2,
-    ) -> None:
+    ):
         super().__init__()
-        self.doc_dict = {}
-        self.q_dict = {}
-        self.q_ids = []
-        with open(collection_path, "r") as f:
-            for line in tqdm(f, desc=f"Reading doc collection from {collection_path}"):
-                doc_id, doc_text = line.strip().split("\t")
-                self.doc_dict[int(doc_id)] = doc_text
-        if expansion_dict is not None:
-            with open(expansion_dict, "r") as f:
-                for doc_id, exp_text in enumerate(f):
-                    self.doc_dict[doc_id] = (
-                        self.doc_dict[doc_id] + " " + exp_text.strip()
-                    )
-        with gzip.open(ce_score_dict, "rb") as f:
-            self.ce_score = pickle.load(f)
-
-        with open(qrels_path, "r") as f:
-            self.qrels = json.load(f)
-
-        with open(queries_path, "r") as f:
-            for line in tqdm(f, desc=f"Reading queries from {queries_path}"):
-                query_id, query_text = line.strip().split("\t")
-                self.q_dict[int(query_id)] = query_text
-                self.q_ids.append(int(query_id))
+        self.doc_dict = read_collection(collection_path)
+        self.queries = read_queries(queries_path)
+        self.qrels = read_qrels(qrels_path)
+        self.ce_score = read_ce_score(ce_score_dict)
         self.train_group_size = train_group_size
 
     def __len__(self):
         return len(self.q_dict)
 
     def __getitem__(self, idx):
-        q_id = self.q_ids[idx]
-        q_text = self.q_dict[q_id]
-        str_qid = str(q_id)
-        if str_qid in self.qrels:
-            doc1_id = int(random.choice(list(self.qrels[str_qid].keys())))
+        q_id, q_text = self.queries[idx]
+        if q_id in self.qrels:
+            doc1_id = int(random.choice(list(self.qrels[q_id].keys())))
         else:
             doc1_id = random.choice(list(self.ce_score[q_id].keys()))
         doc_list = [self.doc_dict[doc1_id]]

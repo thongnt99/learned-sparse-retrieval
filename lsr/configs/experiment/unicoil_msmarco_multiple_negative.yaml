@@ -1,6 +1,6 @@
 # @package _global_
 defaults:
-  - override /dataset@train_dataset: msmarco_mutiple_negative
+  - override /dataset@train_dataset: msmarco_multiple_negative
   - override /loss: multiple_negative_loss 
   - override /model: unicoil
 exp_name: unicoil_msmarco_multiple_negative 

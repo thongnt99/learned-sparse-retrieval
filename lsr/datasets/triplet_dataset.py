@@ -14,7 +14,7 @@ class TripletIdsDataset(Dataset):
         super().__init__()
         self.docs_dict = read_collection(collection_path)
         self.queries_dict = dict(read_queries(queries_path))
-        self.triplets = read_triplets(triplet_ids_path)
+        self.triplets, _, _ = read_triplets(triplet_ids_path)
 
     def __getitem__(self, idx):
         qid, pos_id, neg_id = self.triplets[idx]

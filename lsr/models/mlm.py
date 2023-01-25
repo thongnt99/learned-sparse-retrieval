@@ -122,7 +122,7 @@ class TransformerMLMSparseEncoder(SparseEncoder):
         if config.doc_quality == "no":
             self.doc_quality = functional.AllOne()
         elif config.doc_quality == "epic":
-            self.doc_quality == EPICDocQuality()
+            self.doc_quality = EPICDocQuality()
 
         self.norm = FunctionalFactory.get(config.norm)
 

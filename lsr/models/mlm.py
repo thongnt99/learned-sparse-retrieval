@@ -72,8 +72,8 @@ class TransformerMLMConfig(PretrainedConfig):
         pool: str = "max",
         activation: str = "relu",
         norm: str = "log1p",
-        term_importance: str = "allone",
-        doc_quality: str = "allone",
+        term_importance: str = "no",
+        doc_quality: str = "no",
         **kwargs,
     ):
         """

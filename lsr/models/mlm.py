@@ -108,7 +108,7 @@ class TransformerMLMSparseEncoder(SparseEncoder):
 
     config_class = TransformerMLMConfig
 
-    def __init__(self, config: TransformerMLMConfig):
+    def __init__(self, config: TransformerMLMConfig = TransformerMLMConfig()):
         super(SparseEncoder, self).__init__(config)
         self.model = AutoModelForMaskedLM.from_pretrained(
             config.tf_base_model_name_or_dir

@@ -41,8 +41,9 @@ class AbsPool(nn.Module):
 class PoolingFactory:
     name2class = {"max": MaxPoolValue, "sum": SumPool, "abs": AbsPool}
 
-    def get(self, name):
-        return self.name2class[name]()
+    @classmethod
+    def get(cls, name):
+        return cls.name2class[name]()
 
     @classmethod
     def register(cls, name, class_path):

@@ -1,1 +1,196 @@
-# learned-sparse-retrieval
+
+<img src="images/logo.png" width=6%> ![](https://badgen.net/badge/lsr/instructions/red?icon=github) ![](https://badgen.net/badge/python/3.9.12/green?icon=python)
+# LSR: A unified framework for efficient and effective learned sparse retrieval
+
+This framework provides a convenient toolkit for defining, training, and evaluating learned sparse retrieval methods. The framework comprises standalone modules, so you can easily mix and match between different modules or with your own implementation of each module.  
+
+The structure of this repository is as following: 
+
+```.
+├── analysis #scripts that support experimental analysis
+├── configs  #configuration of different components
+│   ├── dataset 
+│   ├── experiment #define exp details: dataset, loss, model, hp 
+│   ├── loss 
+│   ├── model
+│   └── wandb
+├── datasets    #implementations of dataset loading & collator
+├── evaluate_bier   #code to evaluate on beir benchmark
+├── losses  #implementations of different losses + regularizer
+├── models  #implementations of different models
+├── preprocess  #script to preprocess data (e.g., expand psg)
+├── tests   #unit tests for some components
+├── tokenizer   #a wrapper of HF's tokenizers
+├── trainer     #trainer for training 
+└── utils   #common utilities used in different places
+```
+* The list of all configurations used in the paper could be found [here](#list-of-configurations-used-in-the-paper)
+
+* The instruction for running experiments could be found [here](#training-and-inference-instructions)
+
+## Training and inference instructions 
+
+### 1. Install libraries and dependencies: 
+- create `conda` environemt:
+```
+conda create --name lsr python=3.9.12
+conda activate lsr
+```
+- install dependencies with `pip`
+```
+pip install -r requirements.txt
+```
+
+### 2. Donwload datasets
+
+#### 2.1 Hard negatives and  CE's scores for distillation
+The full dataset consisting of hard negatives and CE's scores could be downloaded from [here](https://download.europe.naverlabs.com/splade/sigir22/data.tar.gz).
+
+To use this dataset with our code, you need to put this dataset to the right directories specified in the coressponding data configuration file at `lsr/configs/dataset/msmarco_distil_nils.yaml`
+
+#### 2.2 BM25 negatives 
+
+The pretokenized BM25 negatives (+queries + positives) could downloaded from [here](http://boston.lti.cs.cmu.edu/luyug/coil/msmarco-psg/).
+
+Similar to 2.1, you need to put this data to the directory specified in `lsr/configs/dataset/coil_pretokenized.yaml`
+
+#### 2.3 Pre-expanding the passages 
+To expand the passges with an external model (docT5query or TILDE), you can use resources like [here](https://huggingface.co/doc2query/msmarco-t5-base-v1) or [here](https://github.com/ielab/TILDE/blob/main/create_psg_train_with_tilde.py). We prepare  scripts for expanding passages with TILDE in: `lsr/preprocess`
+
+#### 2.4 Term-recall datasets: 
+For training DeepCT model, the term-recall dataset derived from MSMARCO relevant query-passage pairs could be downloaded [here](http://boston.lti.cs.cmu.edu/appendices/arXiv2019-DeepCT-Zhuyun-Dai/data/myalltrain.relevant.docterm_recall)
+
+### 3. Train a model 
+Once you have all the dependencies and the dataset downloaded, put in the correct directories. Then, you can start training by running the following command.  
+```bash
+python -m lsr.train +experiment=sparta_msmarco_distil \
+training_arguments.fp16=True resume_from_checkpoint=False
+```
+where `sparta_msmarco_distil` refers to the experiment configuation at `lsr/configs/experiment/sparta_msmarco_distil.yaml`. You can change it to other experiments defined in the same experiment directory. 
+
+Note that, we use `wandb` to monitor the loss, regularization, query length, doc length.  You can disable this feature in the configuration or follow the instruction [here](https://docs.wandb.ai/ref/cli/wandb-login) to setup wandb.  
+
+### 4. Run inference on MSMARCO dataset 
+When the training finished, you can use our inference scripts to generate new queries and documents as following: 
+
+#### 4.1 Generate queries
+```
+input_path=data/msmarco/dev_queries/raw.tsv
+output_file_name=raw.tsv
+batch_size=256
+type='query'
+python -m lsr.inference \
+inference_arguments.input_path=$input_path \
+inference_arguments.output_file=$output_file_name \
+inference_arguments.type=$type \
+inference_arguments.batch_size=$batch_size \
+inference_arguments.scale_factor=100 \
++experiment=sparta_msmarco_distil 
+```
+#### 4.2 Generate documents 
+```
+input_path=data/msmarco/full_collection/split/part01
+output_file_name=part01
+batch_size=256
+type='doc'
+python -m lsr.inference \
+inference_arguments.input_path=$input_path \
+inference_arguments.output_file=$output_file_name \
+inference_arguments.type=$type \
+inference_arguments.batch_size=$batch_size \
+inference_arguments.scale_factor=100 \
+inference_arguments.top_k=-400  \
++experiment=sparta_msmarco_distil \ 
+```
+Note: 
+- The `top_k` argument is the number of terms you want to keep; negative `top_k` means no pruning (all positive terms are kept).   
+- `scale_factor` is used for weight quantization; float weights are multiplied by this `scale_factor` and rounded to the nearest integer. 
+- The inference in document collection will take a long time. Therefore, it is better to split the collection into multiple partitions and run inference using multiple GPUs. 
+- All the generated queries and documents are stored in the`output/{exp_name}/inference/` directory by default, where the `exp_name` parameter is defined in the experiment configuration file. You can change it as you like. 
+
+### 5. Index generated documents 
+#### 5.1 Download and install our modified Anserini indexing software:
+We made simple changes in the indexing procedure in Anserini to improve the indexing speed (by `10x`). 
+In the old method, Anserini first creates fake documents from JSON weight files (e.g., `{"hello": 3}`) by repeating the term (e.g., `"helo hello hello"`) and then indexes these documents as regular documents. The process of creating these fake documents can cause a substantial delay in indexing LSR where the number of terms and weights are usually large. To get rid of this issue, we leverage the [FeatureField](https://lucene.apache.org/core/9_3_0/core/org/apache/lucene/document/FeatureField.html) in Lucene to inject the (term, weight) pairs directly to the index. The change is simple but quite effective, especially when you have to index multiple times (as in the paper).   
+You can download the modified Anserini version [here](https://anonymous.4open.science/r/anserini-lsr-AD27), then follow the instructions in the [README](https://anonymous.4open.science/r/anserini-lsr-AD27/README.md) for installation. If the tests fail, you can skip it by adding `-Dmaven.test.skip=true`.
+
+When the installation is done, you can continue with the next steps. 
+#### 5.2 Index with Anserini
+```
+./anserini-lsr/target/appassembler/bin/IndexCollection \
+-collection JsonTermWeightCollection \
+-input outputs/sparta_distil_sentence_transformers/inference/doc/  \
+-index outputs/sparta_distil_sentence_transformers/index \
+-generator TermWeightDocumentGenerator \
+-threads 60 -impact -pretokenized
+```
+Note that you have to change `sparta_distil_sentence_transformers` to the output defined in your experiment configuation flie (here: `lsr/configs/experiment/sparta_msmarco_distil.yaml`)
+### 6. Search on the Inverted Index
+```
+./anserini-lsr/target/appassembler/bin/SearchCollection \
+-index outputs/sparta_distil_sentence_transformers/index/  \
+-topics outputs/sparta_distil_sentence_transformers/inference/query/raw.tsv \
+-topicreader TsvString \
+-output outputs/sparta_distil_sentence_transformers/run.trec \
+-impact -pretokenized -hits 1000 -parallelism 60
+```
+Here, you may need to change the output directory as in 5.2. 
+### 7. Evaluate the run file
+```
+ir_measures qrels.msmarco-passage.dev-subset.txt outputs/sparta_distil_sentence_transformers/run.trec MRR@10 R@1000 NDCG@10
+```
+`qrels.msmarco-passage.dev-subset.txt` is the qrels file for MSMARCO-dev in TREC format. You can find it on the MSMARCO or TREC DL(19,20) website. Note that for TREC DL (19,20), you have to change `R@1000` to `"R(rel=2)@1000"` (with the quote). 
+
+## List of configurations used in the paper 
+* **RQ1: Are the results from recent LSR papers reproducible?**
+
+Results in Table 3 are the outputs of following experiments: 
+
+|  Method  | Configuration  |
+| :-------- | :--------------|
+| DeepCT | `lsr/configs/experiment/deepct_msmarco_term_level.yaml` |
+| uniCOIL| `lsr/configs/experiment/unicoil_multiple_negative.yaml` |
+| uniCOIL<sub>dT5q</sub>| `lsr/configs/experiment/unicoil_doct5query_multiple_negative.yaml` | 
+| uniCOIL<sub>tilde</sub>| `lsr/configs/experiment/unicoil_tilde_multiple_negative.yaml` | 
+| EPIC | `lsr/configs/experiment/epic_original.yaml`| 
+| DeepImpact | `lsr/configs/experiment/deep_impact_original.yaml` | 
+| TILDE<sub>v2</sub>| `lsr/configs/experiment/tildev2_multiple_negative.yaml` |
+| Sparta | `lsr/configs/experiment/sparta_original.yaml` |
+| Splade<sub>max</sub>| `lsr/configs/experiment/splade_multiple_negative.yaml` |
+| distilSplade<sub>max</sub>|`lsr/configs/experiment/splade_msmarco_distil_0.1_0.08.yaml`|
+
+
+* **RQ2: How do LSR methods perform with recent advanced training
+techniques?**
+
+Results in Table 4 are the outputs of following experiments: 
+
+|  Method  | Configuration  |
+| :-------- | :-------------- |
+| uniCOIL| `lsr/configs/experiment/unicoil_msmarco_distil.yaml` |
+| uniCOIL<sub>dT5q</sub>| `lsr/configs/experiment/unicoil_doct5query_msmarco_distil.yaml`| 
+| uniCOIL<sub>tilde</sub>| `lsr/configs/experiment/unicoil_tilde_msmarco_distil.yaml` | 
+| EPIC | `lsr/configs/experiment/epic_msmarco_distil.yaml` | 
+| DeepImpact | `lsr/configs/experiment/deep_impact_msmarco_distil.yaml` | 
+| TILDE<sub>v2</sub>| `lsr/configs/experiment/tildev2_msmarco_distil.yaml` |
+| Sparta | `lsr/configs/experiment/sparta_msmarco_distil.yaml` |
+| distilSplade<sub>max</sub>|`lsr/configs/experiment/splade_msmarco_distil.yaml` |
+| distilSplade<sub>sep</sub>| `lsr/configs/experiment/splade_asm_msmarco_distil_0.1_0.08.yaml`|
+
+* **RQ3: How does the choice of encoder architecture and regularization
+affect results?**
+
+Results in Table 5 are the outputs of following experiments: 
+
+|  Effect  |  Row | Configuration  |
+| :-------- | :---- | :-------------- |
+| Doc weighting | 1a | Before: `lsr/configs/experiment/splade_asm_dbin_msmarco_distil.yaml` <br> After: `lsr/configs/experiment/splade_asm_dmlp_msmarco_distil.yaml`  |
+|  | 1b | Before: `lsr/configs/experiment/unicoil_dbin_tilde_msmarco_distil.yaml` <br> After: `lsr/configs/experiment/unicoil_tilde_msmarco_distil.yaml` |
+| Query weighting | 2a | Before: `lsr/configs/experiment/tildev2_msmarco_distil.yaml` <br> After: `lsr/configs/experiment/unicoil_tilde_msmarco_distil.yaml`|
+|  | 2b | Before: `lsr/configs/experiment/epic_noq_msmarco_distil.yaml` <br> After: `lsr/configs/experiment/epic_msmarco_distil.yaml`|
+| Doc expansion | 3a | Before: `lsr/configs/experiment/splade_asm_dmlp_msmarco_distil.yaml` <br> After: `lsr/configs/experiment/unicoil_tilde_msmarco_distil.yaml`|
+|  | 3b | Before: `lsr/configs/experiment/unicoil_msmarco_distil.yaml` <br> After: `lsr/configs/experiment/splade_asm_msmarco_distil_0.1_0.08.yaml` |
+|  | 3c | Before: `lsr/configs/experiment/unicoil_msmarco_distil.yaml` <br> After: `lsr/configs/experiment/splade_asm_qmlp_msmarco_distil_0.0_0.08.yaml`|
+| Query expansion | 4a | Before: `lsr/configs/experiment/splade_asm_qmlp_msmarco_distil_0.0_0.08.yaml` <br> After: `lsr/configs/experiment/splade_asm_msmarco_distil_0.1_0.08.yaml`|
+|  | 4b | Before: ``lsr/configs/experiment/unicoil_tilde_msmarco_distil.yaml`` <br> After: `lsr/configs/experiment/splade_asm_dmlp_msmarco_distil.yaml`|
+| Regularization | 5a | Before: `lsr/configs/experiment/splade_asm_qmlp_msmarco_distil_0.0_0.08.yaml` <br> After: `lsr/configs/experiment/splade_asm_qmlp_msmarco_distil_0.0_0.00.yaml`|

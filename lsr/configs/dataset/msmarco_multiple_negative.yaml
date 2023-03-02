@@ -1,5 +1,5 @@
 _target_: lsr.datasets.MultipleNegatives
 collection_path: 'irds:msmarco-passage/train/judged'
 queries_path: 'irds:msmarco-passage/train/judged'
-triplet_ids_path: 'irds:msmarco-passage/train/judged'
+triplet_ids_path: 'irds:msmarco-passage/train/triples-small'
 train_group_size: 8

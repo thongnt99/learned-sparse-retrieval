@@ -1,6 +1,6 @@
 # @package _global_
 defaults:
-  - override /dataset@train_dataset: msmarco_distil_nils
+  - override /dataset@train_dataset: msmarco_triplet_distil
   - override /loss: distil_margin_mse
   - override /model: sparta
-exp_name: sparta_distil_sentence_transformers
+exp_name: sparta_msmarco_distil

@@ -1,0 +1,2 @@
+_target_: lsr.datasets.TermRecallDataset
+data_path: data/msmarco/deepct/myalltrain.relevant.docterm_recall

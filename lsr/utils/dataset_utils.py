@@ -5,6 +5,11 @@ from datasets import DownloadManager
 from collections import defaultdict
 import gzip
 import pickle
+from pathlib import Path
+import requests
+import sys
+import os
+
 
 IRDS_PREFIX = "irds:"
 HFG_PREFIX = "hfds:"
@@ -112,3 +117,34 @@ def read_triplets(triplet_path: str):
                 query2neg[qid].append(neg_id)
     return triplets, query2pos, query2neg
 
+
+def download_file(url, file_path):
+    """
+    Downloads file and store in a path (Code borrow from Sentence Transformers)
+    Arguments
+    ---------
+    url: str
+        link of the file
+    path:    
+        path to store the file
+    """
+    file_path = Path(file_path)
+    if not file_path.parent.exits():
+        file_path.parent.mkdir(parents=True, exist_ok=True)
+    req = requests.get(url, stream=True)
+    if req.status_code != 200:
+        print(
+            f"Error when trying to download {url}. Response {req.status_code}",
+            file=sys.stderr,
+        )
+        req.raise_for_status()
+        return
+    with open(file_path, "wb") as f:
+        content_length = req.headers.get("Content-Length")
+        total = int(content_length) if content_length is not None else None
+        progress = tqdm(unit="B", total=total, unit_scale=True)
+        for chunk in req.iter_content(chunk_size=1024):
+            if chunk:
+                progress.update(len(chunk))
+                f.write(chunk)
+    progress.close()

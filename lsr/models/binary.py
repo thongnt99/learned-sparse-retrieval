@@ -43,7 +43,7 @@ class BinaryEncoder(SparseEncoder):
         config: BinaryEncoderConfig
             configuration for the BinaryEncoder
         """
-        super().__init__()
+        super().__init__(config)
         self.vocab_size = config.vocab_size
         self.scale = nn.Parameter(torch.tensor(config.scale))
 

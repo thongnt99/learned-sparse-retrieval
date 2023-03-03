@@ -1,0 +1,6 @@
+_target_: lsr.models.DualSparseEncoder
+query_encoder:
+  _target_: lsr.models.BinaryEncoder
+doc_encoder:
+  _target_: lsr.models.TransformerMLMSparseEncoder
+  

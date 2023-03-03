@@ -65,14 +65,15 @@ To expand the passges with an external model (docT5query or TILDE), you can use 
 For training DeepCT model, the term-recall dataset derived from MSMARCO relevant query-passage pairs could be downloaded [here](http://boston.lti.cs.cmu.edu/appendices/arXiv2019-DeepCT-Zhuyun-Dai/data/myalltrain.relevant.docterm_recall) -->
 
 ### 3. Train a model 
-Once you have all the dependencies and the dataset downloaded, put in the correct directories. Then, you can start training by running the following command.  
+Before starting the training process, make sure you have downloaded all the necessary dependencies and dataset, and have placed them in the correct directories. Once you have completed these steps, you can begin training by entering the following command in your terminal:
+
 ```bash
 python -m lsr.train +experiment=sparta_msmarco_distil \
 training_arguments.fp16=True resume_from_checkpoint=False
 ```
-where `sparta_msmarco_distil` refers to the experiment configuation at `lsr/configs/experiment/sparta_msmarco_distil.yaml`. You can change it to other experiments defined in the same experiment directory. 
+In this command, `sparta_msmarco_distil` refers to the experiment configuration file located at `lsr/configs/experiment/sparta_msmarco_distil.yaml`. If you wish to use a different experiment, simply change this value to the name of the desired configuration file in the same directory.
 
-Note that, we use `wandb` to monitor the loss, regularization, query length, doc length.  You can disable this feature in the configuration or follow the instruction [here](https://docs.wandb.ai/ref/cli/wandb-login) to setup wandb.  
+Please note that we use `wandb` to monitor the training process, including loss, regularization, query length, and document length. If you wish to disable this feature, you can do so by modifying the configuration file. Alternatively, you can follow the instructions provided in this [link](https://docs.wandb.ai/ref/cli/wandb-login) to set up wandb.
 
 ### 4. Run inference on MSMARCO dataset 
 When the training finished, you can use our inference scripts to generate new queries and documents as following: 

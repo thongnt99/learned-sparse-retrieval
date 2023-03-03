@@ -2,7 +2,7 @@
 <img src="images/logo.png" width=6%> ![](https://badgen.net/badge/lsr/instructions/red?icon=github) ![](https://badgen.net/badge/python/3.9.12/green?icon=python)
 # LSR: A unified framework for efficient and effective learned sparse retrieval
 
-This framework provides a convenient toolkit for defining, training, and evaluating learned sparse retrieval methods. The framework comprises standalone modules, so you can easily mix and match between different modules or with your own implementation of each module.  
+The framework provides a simple yet effective toolkit for defining, training, and evaluating learned sparse retrieval methods. The framework is made up of standalone modules, allowing for easy mixing and matching of different modules or integration with your own implementation. This provides flexibility to experiment and customize the retrieval process to meet your specific needs.
 
 The structure of this repository is as following: 
 
@@ -40,10 +40,14 @@ conda activate lsr
 ```
 pip install -r requirements.txt
 ```
+### 2. Downwload/generate datasets
 
-### 2. Donwload datasets
+Our framework provides the flexibility to load datasets from various sources, including local datasets hosted on your machine, datasets hosted on remote servers accessible via a link, datasets provided by `ir_datasets`, and datasets provided by Hugging Face's `dataset`.
 
-#### 2.1 Hard negatives and  CE's scores for distillation
+We have included all pre-defined dataset configurations you need to reproduce our experiments under `lsr/configs/dataset`. For publicly available datasets, our framework automatically downloads and places them in the correct directories. However, for private or licensed datasets or datasets requiring additional preprocessing, you will need to manually obtain the files and place them in the appropriate directory.
+
+
+<!-- #### 2.1 Hard negatives and  CE's scores for distillation
 The full dataset consisting of hard negatives and CE's scores could be downloaded from [here](https://download.europe.naverlabs.com/splade/sigir22/data.tar.gz).
 
 To use this dataset with our code, you need to put this dataset to the right directories specified in the coressponding data configuration file at `lsr/configs/dataset/msmarco_distil_nils.yaml`
@@ -58,7 +62,7 @@ Similar to 2.1, you need to put this data to the directory specified in `lsr/con
 To expand the passges with an external model (docT5query or TILDE), you can use resources like [here](https://huggingface.co/doc2query/msmarco-t5-base-v1) or [here](https://github.com/ielab/TILDE/blob/main/create_psg_train_with_tilde.py). We prepare  scripts for expanding passages with TILDE in: `lsr/preprocess`
 
 #### 2.4 Term-recall datasets: 
-For training DeepCT model, the term-recall dataset derived from MSMARCO relevant query-passage pairs could be downloaded [here](http://boston.lti.cs.cmu.edu/appendices/arXiv2019-DeepCT-Zhuyun-Dai/data/myalltrain.relevant.docterm_recall)
+For training DeepCT model, the term-recall dataset derived from MSMARCO relevant query-passage pairs could be downloaded [here](http://boston.lti.cs.cmu.edu/appendices/arXiv2019-DeepCT-Zhuyun-Dai/data/myalltrain.relevant.docterm_recall) -->
 
 ### 3. Train a model 
 Once you have all the dependencies and the dataset downloaded, put in the correct directories. Then, you can start training by running the following command.  

@@ -1,0 +1,11 @@
+_target_: lsr.models.DualSparseEncoder
+query_encoder:
+  _target_: lsr.models.TransformerMLPSparseEncoder
+  config:
+    _target_: lsr.models.TransformerMLPConfig
+    tf_base_model_name_or_dir: distilbert-base-uncased
+    activation: "identity" 
+    norm: "identity"
+config:
+  _target_: lsr.models.DualSparseConfig
+  shared: True

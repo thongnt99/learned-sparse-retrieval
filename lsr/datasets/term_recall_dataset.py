@@ -17,7 +17,7 @@ class TermRecallDataset(Dataset):
         self.data = []
         if not Path(data_path).exists():
             if data_path in self.links:
-                download_file(data_path, self.links[data_path])
+                download_file(self.links[data_path], data_path)
             else:
                 raise Exception(f"File not found: {data_path}")
         with open(data_path, "r", encoding="UTF-8") as f:

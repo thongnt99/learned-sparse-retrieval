@@ -129,7 +129,7 @@ def download_file(url, file_path):
         path to store the file
     """
     file_path = Path(file_path)
-    if not file_path.parent.exits():
+    if not file_path.parent.exists():
         file_path.parent.mkdir(parents=True, exist_ok=True)
     req = requests.get(url, stream=True)
     if req.status_code != 200:

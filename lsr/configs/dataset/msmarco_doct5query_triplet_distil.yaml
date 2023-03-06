@@ -1,0 +1,5 @@
+_target_: lsr.datasets.TripletIDDistilDataset
+collection_path: 'hfds:lsr/msmarco-passage-doct5query'
+queries_path: 'irds:msmarco-passage/train/judged'
+qrels_path:  'irds:msmarco-passage/train/judged'
+ce_score_dict: 'hfds:sentence-transformers/msmarco-hard-negatives'

@@ -99,7 +99,7 @@ class DualSparseEncoder(PreTrainedModel):
             self.encoder.save_pretrained(model_dir, "/shared_encoder")
         else:
             self.query_encoder.save_pretrained(model_dir + "/query_encoder")
-            self.doc_encoder.save_pretrained(model_dir, "/doc_encoder")
+            self.doc_encoder.save_pretrained(model_dir + "/doc_encoder")
 
     @classmethod
     def from_pretrained(cls, model_dir_or_name):

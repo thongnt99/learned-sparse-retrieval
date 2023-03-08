@@ -37,26 +37,16 @@
         <div class="container px-lg-5">
             <div class="p-4 p-lg-5 bg-light rounded-3 text-center">
                 <div class="m-4 m-lg-5">
-                    <h1 class="display-5 fw-bold">A Unified Framework for Learned Sparse Retrieval</h1>
-                    <p class="fs-4">Learned sparse retrieval (LSR) is a family of first-stage retrieval methods that are
-                        trained to generate sparse lexical representations of queries and documents for use with an
-                        inverted index. Many LSR methods have been recently introduced, with Splade models achieving
-                        state-of-the-art performance on MSMarco. Despite similarities in their model architectures, many
-                        LSR methods show substantial differences in effectiveness and efficiency.
-                        Differences in the experimental setups and configurations used make it difficult to compare the
-                        methods and derive insights.
-                        %However, despite the similarity in the model's architecture, some LSR methods showed diverged
-                        effectiveness and efficiency due to different training and testing environments.
-                        %These discrepancies make it difficult to compare LSR methods and derive insights.
-                        In this work, we analyze existing LSR methods and identify key components to establish an LSR
-                        framework that unifies all LSR methods under the same perspective. We then reproduce all
-                        prominent methods using a common codebase and re-train them in the same environment, which
-                        allows us to quantify how components of the framework affect effectiveness and efficiency. We
-                        find that (1) including document term weighting is most important for a method's effectiveness,
-                        (2) including query weighting has a small positive impact, and (3) document expansion and query
-                        expansion have a cancellation effect. As a result, we show how removing query expansion from a
-                        state-of-the-art model can reduce latency significantly while maintaining effectiveness on
-                        MSMarco and TripClick benchmarks. Our code is publicly available.</p>
+                    <h1 class="display-5 fw-bold">Learned Sparse Retrieval Framework</h1>
+                    <p class="fs-4">
+                        Learned sparse retrieval (LSR) utilizes powerful transformer models to convert queries and
+                        documents into highly informative sparse vectors based on the term weights. LSR delivers great
+                        search accuracy and outperforms traditional techniques like BM25. While being equally effective
+                        to dense retrieval, LSR is designed to be easily integrated into existing BM25 search
+                        infrastructures without requiring any significant modifications. Whether you're looking to train
+                        or evaluate different LSR architectures, including the latest state-of-the-art models, this
+                        framework offers a simple solution to streamline your efforts.
+                    </p>
                     <a class="btn btn-primary btn-lg" href="#!">Call to action</a>
                 </div>
             </div>

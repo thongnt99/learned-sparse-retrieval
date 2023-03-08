@@ -1,5 +1,5 @@
 _target_: lsr.datasets.TripletIDDistilDataset
-collection_path: 'hfds:lsr/msmarco-passage-tilde'
+collection_path: 'hfds:lsr42/msmarco-passage-tilde'
 #data/msmarco/full_collection/raw.tsv
 queries_path: 'irds:msmarco-passage/train/judged'
 #data/msmarco/train_queries/queries/raw.tsv

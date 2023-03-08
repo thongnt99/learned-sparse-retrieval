@@ -35,7 +35,7 @@ def read_collection(collection_path: str, text_fields=["text"]):
             dataset["passage"],
             desc=f"Loading data from HuggingFace datasets: {hfg_name}",
         ):
-            doc_dict[row["id"]] = doc["text"]
+            doc_dict[row["id"]] = row["text"]
     else:
         with open(collection_path, "r") as f:
             for line in tqdm(f, desc=f"Reading doc collection from {collection_path}"):

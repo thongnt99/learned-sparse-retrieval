@@ -30,21 +30,32 @@ The structure of this repository is as following:
 
 ## Training and inference instructions 
 
-### 1. Install libraries and dependencies: 
-- create `conda` environemt:
+### 1. Create conda environment and install dependencies: 
+
+Create `conda` environemt:
 ```
 conda create --name lsr python=3.9.12
 conda activate lsr
 ```
-- install dependencies with `pip`
+Install dependencies with `pip`
 ```
 pip install -r requirements.txt
 ```
+
 ### 2. Downwload/generate datasets
+ We have included all pre-defined dataset configurations under `lsr/configs/dataset`. Before starting training, ensure that you have the `ir_datasets` and (huggingface) `datasets` libraries installed, as the framework will automatically download and store the necessary data to the correct directories.
 
-Our framework provides the flexibility to load datasets from various sources, including local datasets hosted on your machine, datasets hosted on remote servers accessible via a link, datasets provided by `ir_datasets`, and datasets provided by Hugging Face's `dataset`.
+For datasets from `ir_datasets`, the downloaded files are saved by default at `~/.ir_datasets/`. You can modify this path by changing the `IR_DATASETS_HOME` environment variable.
 
-We have included all pre-defined dataset configurations you need to reproduce our experiments under `lsr/configs/dataset`. For publicly available datasets, our framework automatically downloads and places them in the correct directories. However, for private or licensed datasets or datasets requiring additional preprocessing, you will need to manually obtain the files and place them in the appropriate directory.
+Similarly, for datasets from the HuggingFace's `datasets`, the downloaded files are stored at `~/.cache/huggingface/datasets` by default. To specify a different cache directory, set the `HF_DATASETS_CACHE` environment variable. 
+
+To train a customed model on your own dataset, please use the sample configurations under `lsr/config/dataset` as templates. Overall, you need three important files (see `lsr/dataset_utils` for the file format): 
+- document collection: maps `document_id` to `document_text` 
+- queries: maps `query_id` to `query_text`
+- train triplets or scored pairs:
+    - train triplets, used for contrastive learning, contains a list of <`query_id`, `positive_document_id`, `negative_document_id`> triplets.
+    - scored_pairs, used for distillation training, contain pairs of <`query`, `document_id`> with a relevance score.  
+
 
 
 <!-- #### 2.1 Hard negatives and  CE's scores for distillation
@@ -65,15 +76,18 @@ To expand the passges with an external model (docT5query or TILDE), you can use 
 For training DeepCT model, the term-recall dataset derived from MSMARCO relevant query-passage pairs could be downloaded [here](http://boston.lti.cs.cmu.edu/appendices/arXiv2019-DeepCT-Zhuyun-Dai/data/myalltrain.relevant.docterm_recall) -->
 
 ### 3. Train a model 
-Before starting the training process, make sure you have downloaded all the necessary dependencies and dataset, and have placed them in the correct directories. Once you have completed these steps, you can begin training by entering the following command in your terminal:
+
+To train a LSR model, you can just simply run the following command:
 
 ```bash
 python -m lsr.train +experiment=sparta_msmarco_distil \
-training_arguments.fp16=True resume_from_checkpoint=False
+training_arguments.fp16=True 
 ```
-In this command, `sparta_msmarco_distil` refers to the experiment configuration file located at `lsr/configs/experiment/sparta_msmarco_distil.yaml`. If you wish to use a different experiment, simply change this value to the name of the desired configuration file in the same directory.
 
-Please note that we use `wandb` to monitor the training process, including loss, regularization, query length, and document length. If you wish to disable this feature, you can do so by modifying the configuration file. Alternatively, you can follow the instructions provided in this [link](https://docs.wandb.ai/ref/cli/wandb-login) to set up wandb.
+In this command, `sparta_msmarco_distil` refers to the experiment configuration file located at `lsr/configs/experiment/sparta_msmarco_distil.yaml`. If you wish to use a different experiment, simply change this value to the name of the desired configuration file under `lsr/configs/experiment`.
+
+Please note that we use `wandb` (by default) to monitor the training process, including loss, regularization, query length, and document length. If you wish to disable this feature, you can do so by adding `training_arguments.report_to='none'` to the above command. Alternatively, you can follow the instructions [here](https://docs.wandb.ai/ref/cli/wandb-login) to set up wandb.
+
 
 ### 4. Run inference on MSMARCO dataset 
 When the training finished, you can use our inference scripts to generate new queries and documents as following: 

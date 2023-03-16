@@ -43,22 +43,24 @@ class CrossEntropyLoss(Loss):
         d_num = d_reps.size(0)
         assert d_num % q_num == 0
         doc_group_size = d_num // q_num
-
         sim_matrix = dot_product(
-            q_reps.unsqueeze(1),
-            d_reps.view(q_num, doc_group_size, -1),
+            q_reps.unsqueeze(1), d_reps.view(q_num, doc_group_size, -1),
         )
-        # cross_dot_product(q_reps, d_reps)
+
         reg_q_output = (
             torch.tensor(0.0, device=q_reps.device)
             if (self.q_regularizer is None)
             else self.q_regularizer(q_reps)
         )
+
         reg_d_output = (
             torch.tensor(0.0, device=d_reps.device)
             if (self.d_regularizer is None)
             else self.d_regularizer(d_reps)
         )
+        if labels is None:
+            labels = torch.zeros(0, q_num, dtype=torch.int, device=sim_matrix.device)
+
         ce_loss = self.ce(sim_matrix, labels)
         if not self.q_regularizer is None:
             self.q_regularizer.step()

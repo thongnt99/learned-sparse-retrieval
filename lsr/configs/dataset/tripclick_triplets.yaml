@@ -1,0 +1,5 @@
+_target_: lsr.datasets.MultipleNegatives
+collection_path: 'irds:tripclick/train/hofstaetter-triples'
+queries_path: 'irds:tripclick/train/hofstaetter-triples'
+triplet_ids_path: 'irds:tripclick/train/hofstaetter-triples'
+train_group_size: 8

@@ -1,0 +1,9 @@
+# @package _global_
+defaults:
+  - override /dataset@train_dataset: msmarco_tilde_triplet_distil
+  - override /loss: distil_margin_mse
+  - override /model: unicoil_dbin
+exp_name: unicoil_dbin_tilde_msmarco_distil 
+training_arguments:
+  max_steps: -1
+  num_train_epochs: 22

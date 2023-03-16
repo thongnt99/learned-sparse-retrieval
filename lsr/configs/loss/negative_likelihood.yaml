@@ -1,1 +1,1 @@
-_target_: lsr.losses.NegativeLikelihood
+_target_: lsr.losses.NegativeLikelihoodLoss

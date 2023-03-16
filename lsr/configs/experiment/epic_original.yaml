@@ -24,4 +24,3 @@ training_arguments:
   dataloader_drop_last: True
 tokenizer:
   tokenizer_name: distilbert-base-uncased
-  is_fast: False 

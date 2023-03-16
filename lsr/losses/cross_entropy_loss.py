@@ -59,7 +59,7 @@ class CrossEntropyLoss(Loss):
             else self.d_regularizer(d_reps)
         )
         if labels is None:
-            labels = torch.zeros(q_num, dtype=torch.int, device=sim_matrix.device)
+            labels = torch.zeros(q_num, dtype=torch.long, device=sim_matrix.device)
 
         ce_loss = self.ce(sim_matrix, labels)
         if not self.q_regularizer is None:

@@ -1,0 +1,6 @@
+# @package _global_
+defaults:
+  - override /dataset@train_dataset: msmarco_triplet_distil
+  - override /loss: distil_margin_mse
+  - override /model: tilde
+exp_name: tilde_msmarco_distil

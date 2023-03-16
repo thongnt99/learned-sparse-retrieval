@@ -1,0 +1,27 @@
+# @package _global_
+defaults:
+  - override /dataset@train_dataset: msmarco_multiple_negative
+  - override /loss: negative_likelihood 
+  - override /model: epic
+exp_name: epic_original 
+
+train_dataset:
+  train_group_size: 2
+
+data_collator:
+  _target_: lsr.datasets.data_collator.DataCollator
+
+training_arguments:
+  fp16: True 
+  per_device_train_batch_size: 16
+  learning_rate: 2e-5
+  warmup_steps: 0
+  max_steps: 2432
+  save_steps: 1000
+  warmup_ratio: 0
+  lr_scheduler_type: 'constant'
+  dataloader_num_workers: 16 
+  dataloader_drop_last: True
+tokenizer:
+  tokenizer_name: distilbert-base-uncased
+  is_fast: False 

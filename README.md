@@ -207,10 +207,9 @@ Results in Table 5 are the outputs of following experiments:
 | Doc weighting | 1a | Before: `lsr/configs/experiment/splade_asm_dbin_msmarco_distil.yaml` <br> After: `lsr/configs/experiment/splade_asm_dmlp_msmarco_distil.yaml`  |
 |  | 1b | Before: `lsr/configs/experiment/unicoil_dbin_tilde_msmarco_distil.yaml` <br> After: `lsr/configs/experiment/unicoil_tilde_msmarco_distil.yaml` |
 | Query weighting | 2a | Before: `lsr/configs/experiment/tildev2_msmarco_distil.yaml` <br> After: `lsr/configs/experiment/unicoil_tilde_msmarco_distil.yaml`|
-|  | 2b | Before: `lsr/configs/experiment/epic_noq_msmarco_distil.yaml` <br> After: `lsr/configs/experiment/epic_msmarco_distil.yaml`|
-| Doc expansion | 3a | Before: `lsr/configs/experiment/splade_asm_dmlp_msmarco_distil.yaml` <br> After: `lsr/configs/experiment/unicoil_tilde_msmarco_distil.yaml`|
-|  | 3b | Before: `lsr/configs/experiment/unicoil_msmarco_distil.yaml` <br> After: `lsr/configs/experiment/splade_asm_msmarco_distil_0.1_0.08.yaml` |
-|  | 3c | Before: `lsr/configs/experiment/unicoil_msmarco_distil.yaml` <br> After: `lsr/configs/experiment/splade_asm_qmlp_msmarco_distil_0.0_0.08.yaml`|
-| Query expansion | 4a | Before: `lsr/configs/experiment/splade_asm_qmlp_msmarco_distil_0.0_0.08.yaml` <br> After: `lsr/configs/experiment/splade_asm_msmarco_distil_0.1_0.08.yaml`|
+|  | 2b | Before: `lsr/configs/experiment/epic_qbin_msmarco_distil.yaml` <br> After: `lsr/configs/experiment/epic_msmarco_distil.yaml`|
+| Doc expansion | 3a | Before: `lsr/configs/experiment/splade_asm_dmlp_msmarco_distil.yaml` <br> After: `lsr/configs/experiment/splade_asm_msmarco_distil_flops_0.1_0.08.yaml`|
+|  | 3b | Before: `lsr/configs/experiment/unicoil_msmarco_distil.yaml` <br> After: `lsr/configs/experiment/splade_asm_qmlp_msmarco_distil_flops_0.0_0.08.yaml` |
+| Query expansion | 4a | Before: `lsr/configs/experiment/unicoil_tilde_msmarco_distil.yaml` <br> After: `lsr/configs/experiment/splade_asm_dmlp_msmarco_distil.yaml`|
 |  | 4b | Before: ``lsr/configs/experiment/unicoil_tilde_msmarco_distil.yaml`` <br> After: `lsr/configs/experiment/splade_asm_dmlp_msmarco_distil.yaml`|
-| Regularization | 5a | Before: `lsr/configs/experiment/splade_asm_qmlp_msmarco_distil_0.0_0.08.yaml` <br> After: `lsr/configs/experiment/splade_asm_qmlp_msmarco_distil_0.0_0.00.yaml`|
+| Regularization | 5a | Before: `lsr/configs/experiment/splade_asm_qmlp_msmarco_distil_flops_0.0_0.08.yaml` <br> After: `lsr/configs/experiment/splade_asm_qmlp_msmarco_distil_flops_0.0_0.00.yaml`|

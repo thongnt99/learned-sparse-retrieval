@@ -2,7 +2,7 @@
 <img src="images/logo.png" width=6%> ![](https://badgen.net/badge/lsr/instructions/red?icon=github) ![](https://badgen.net/badge/python/3.9.12/green?icon=python)
 # LSR: A unified framework for efficient and effective learned sparse retrieval
 
-The framework provides a simple yet effective toolkit for defining, training, and evaluating learned sparse retrieval methods. The framework is made up of standalone modules, allowing for easy mixing and matching of different modules or integration with your own implementation. This provides flexibility to experiment and customize the retrieval process to meet your specific needs.
+The framework provides a simple yet effective toolkit for defining, training, and evaluating learned sparse retrieval methods. The framework is composed of standalone modules, allowing for easy mixing and matching of different modules or integration with your own implementation. This provides flexibility to experiment and customize the retrieval model to meet your specific needs.
 
 The structure of this repository is as following: 
 
@@ -90,6 +90,7 @@ Please note that we use `wandb` (by default) to monitor the training process, in
 
 
 ### 4. Run inference on MSMARCO dataset 
+
 When the training finished, you can use our inference scripts to generate new queries and documents as following: 
 
 #### 4.1 Generate queries
@@ -168,15 +169,15 @@ Results in Table 3 are the outputs of following experiments:
 |  Method  | Configuration  |
 | :-------- | :--------------|
 | DeepCT | `lsr/configs/experiment/deepct_msmarco_term_level.yaml` |
-| uniCOIL| `lsr/configs/experiment/unicoil_multiple_negative.yaml` |
-| uniCOIL<sub>dT5q</sub>| `lsr/configs/experiment/unicoil_doct5query_multiple_negative.yaml` | 
-| uniCOIL<sub>tilde</sub>| `lsr/configs/experiment/unicoil_tilde_multiple_negative.yaml` | 
+| uniCOIL| `lsr/configs/experiment/unicoil_msmarco_multiple_negative.yaml` |
+| uniCOIL<sub>dT5q</sub>| `lsr/configs/experiment/unicoil_doct5query_msmarco_multiple_negative.yaml` | 
+| uniCOIL<sub>tilde</sub>| `lsr/configs/experiment/unicoil_tilde_msmarco_multiple_negative.yaml` | 
 | EPIC | `lsr/configs/experiment/epic_original.yaml`| 
 | DeepImpact | `lsr/configs/experiment/deep_impact_original.yaml` | 
-| TILDE<sub>v2</sub>| `lsr/configs/experiment/tildev2_multiple_negative.yaml` |
+| TILDE<sub>v2</sub>| `lsr/configs/experiment/tildev2_msmarco_multiple_negative.yaml` |
 | Sparta | `lsr/configs/experiment/sparta_original.yaml` |
-| Splade<sub>max</sub>| `lsr/configs/experiment/splade_multiple_negative.yaml` |
-| distilSplade<sub>max</sub>|`lsr/configs/experiment/splade_msmarco_distil_0.1_0.08.yaml`|
+| Splade<sub>max</sub>| `lsr/configs/experiment/splade_msmarco_multiple_negative.yaml` |
+| distilSplade<sub>max</sub>|`lsr/configs/experiment/splade_msmarco_distil_flops_0.1_0.08.yaml`|
 
 
 * **RQ2: How do LSR methods perform with recent advanced training

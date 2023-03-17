@@ -194,8 +194,8 @@ Results in Table 4 are the outputs of following experiments:
 | DeepImpact | `lsr/configs/experiment/deep_impact_msmarco_distil.yaml` | 
 | TILDE<sub>v2</sub>| `lsr/configs/experiment/tildev2_msmarco_distil.yaml` |
 | Sparta | `lsr/configs/experiment/sparta_msmarco_distil.yaml` |
-| distilSplade<sub>max</sub>|`lsr/configs/experiment/splade_msmarco_distil.yaml` |
-| distilSplade<sub>sep</sub>| `lsr/configs/experiment/splade_asm_msmarco_distil_0.1_0.08.yaml`|
+| distilSplade<sub>max</sub>|`lsr/configs/experiment/splade_msmarco_distil_flops_0.1_0.08.yaml` |
+| distilSplade<sub>sep</sub>| `lsr/configs/experiment/splade_asm_msmarco_distil_flops_0.1_0.08.yaml`|
 
 * **RQ3: How does the choice of encoder architecture and regularization
 affect results?**

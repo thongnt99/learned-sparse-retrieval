@@ -201,6 +201,7 @@ Results in Table 4 are the outputs of following experiments:
 affect results?**
 
 Results in Table 5 are the outputs of following experiments: 
+- MSMARCO Passage
 
 |  Effect  |  Row | Configuration  |
 | :-------- | :---- | :-------------- |
@@ -211,5 +212,19 @@ Results in Table 5 are the outputs of following experiments:
 | Doc expansion | 3a | Before: `lsr/configs/experiment/splade_asm_dmlp_msmarco_distil.yaml` <br> After: `lsr/configs/experiment/splade_asm_msmarco_distil_flops_0.1_0.08.yaml`|
 |  | 3b | Before: `lsr/configs/experiment/unicoil_msmarco_distil.yaml` <br> After: `lsr/configs/experiment/splade_asm_qmlp_msmarco_distil_flops_0.0_0.08.yaml` |
 | Query expansion | 4a | Before: `lsr/configs/experiment/unicoil_tilde_msmarco_distil.yaml` <br> After: `lsr/configs/experiment/splade_asm_dmlp_msmarco_distil.yaml`|
-|  | 4b | Before: ``lsr/configs/experiment/unicoil_tilde_msmarco_distil.yaml`` <br> After: `lsr/configs/experiment/splade_asm_dmlp_msmarco_distil.yaml`|
+|  | 4b | Before: `lsr/configs/experiment/unicoil_tilde_msmarco_distil.yaml` <br> After: `lsr/configs/experiment/splade_asm_dmlp_msmarco_distil.yaml`|
 | Regularization | 5a | Before: `lsr/configs/experiment/splade_asm_qmlp_msmarco_distil_flops_0.0_0.08.yaml` <br> After: `lsr/configs/experiment/splade_asm_qmlp_msmarco_distil_flops_0.0_0.00.yaml`|
+
+- Tripclick
+
+|  Effect  |  Row | Configuration  |
+| :-------- | :---- | :-------------- |
+| Doc weighting | 1a | Before: `lsr/configs/experiment/qmlp_dbin_tripclick_multiple_negative.yaml` <br> After: `lsr/configs/experiment/unicoil_tripclick_multiple_negative.yaml`  |
+|  | 1b | Before: `lsr/configs/experiment/qmlp_dexpbin_tripclick_multiple_negative.yaml` <br> After: `lsr/configs/experiment/unicoil_tilde_tripclick_multiple_negative.yaml` |
+| Query weighting | 2a | Before: `lsr/configs/experiment/sparta_tripclick_multiple_negative.yaml` <br> After: `lsr/configs/experiment/qmlp_dmlm_tripclick_hard_negative_0.0_0.0.yaml`|
+|  | 2b | Before: `lsr/configs/experiment/qbin_dmlp_tripclick_multiple_negative.yaml` <br> After: `lsr/configs/experiment/unicoil_tripclick_multiple_negative.yaml`|
+| Doc expansion | 3a | Before: `lsr/configs/experiment/qmlm_dmlp_tripclick_hard_negative_l1_0.001.yaml` <br> After: `lsr/configs/experiment/splade_asm_tripclick_multiple_negative_l1_0.001_0.00001.yaml`|
+|  | 3b | Before: `lsr/configs/experiment/unicoil_tripclick_multiple_negative.yaml` <br> After: `lsr/configs/experiment/qmlp_dmlm_tripclick_hard_negative_l1_0.0_0.00001.yaml` |
+| Query expansion | 4a | Before: `lsr/configs/experiment/qmlp_dmlm_tripclick_hard_negative_l1_0.0_0.00001.yaml` <br> After: `lsr/configs/experiment/splade_asm_tripclick_multiple_negative_l1_0.001_0.00001.yaml`|
+|  | 4b | Before: `lsr/configs/experiment/unicoil_tripclick_multiple_negative.yaml` <br> After: `lsr/configs/experiment/qmlm_dmlp_tripclick_hard_negative_l1_0.001.yaml`|
+| Regularization | 5a | Before: `lsr/configs/experiment/epic_tripclick_multiple_negative.yaml` <br> After: `lsr/configs/experiment/qmlp_dmlm_tripclick_hard_negative_l1_0.0_0.00001.yaml`|

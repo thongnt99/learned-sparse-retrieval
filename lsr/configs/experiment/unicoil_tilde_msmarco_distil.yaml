@@ -1,0 +1,6 @@
+# @package _global_
+defaults:
+  - override /dataset@train_dataset: msmarco_tilde_triplet_distil
+  - override /loss: distil_margin_mse
+  - override /model: unicoil
+exp_name: unicoil_tilde_msmarco_distil

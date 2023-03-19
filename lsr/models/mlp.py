@@ -36,7 +36,7 @@ class TransformerMLPSparseEncoder(SparseEncoder):
 
     config_class = TransformerMLPConfig
 
-    def __init__(self, config: TransformerMLPConfig):
+    def __init__(self, config: TransformerMLPConfig = TransformerMLPConfig()):
         super().__init__(config)
         self.model = AutoModel.from_pretrained(config.tf_base_model_name_or_dir)
         self.linear = nn.Linear(self.model.config.hidden_size, 1)

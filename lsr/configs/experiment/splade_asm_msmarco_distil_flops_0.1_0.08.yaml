@@ -1,0 +1,13 @@
+# @package _global_
+defaults:
+  - override /dataset@train_dataset: msmarco_triplet_distil 
+  - override /loss: distil_margin_mse
+  - override /model: splade_asm
+exp_name: splade_asm_msmarco_distil_flops_0.1_0.08
+loss:
+  q_regularizer:
+    weight: 0.1
+    T: 50000
+  d_regularizer:
+    weight: 0.08
+    T: 50000

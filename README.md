@@ -2,7 +2,7 @@
 <img src="images/logo.png" width=6%> ![](https://badgen.net/badge/lsr/instructions/red?icon=github) ![](https://badgen.net/badge/python/3.9.12/green?icon=python)
 # LSR: A unified framework for efficient and effective learned sparse retrieval
 
-The framework provides a simple yet effective toolkit for defining, training, and evaluating learned sparse retrieval methods. The framework is made up of standalone modules, allowing for easy mixing and matching of different modules or integration with your own implementation. This provides flexibility to experiment and customize the retrieval process to meet your specific needs.
+The framework provides a simple yet effective toolkit for defining, training, and evaluating learned sparse retrieval methods. The framework is composed of standalone modules, allowing for easy mixing and matching of different modules or integration with your own implementation. This provides flexibility to experiment and customize the retrieval model to meet your specific needs.
 
 The structure of this repository is as following: 
 
@@ -30,21 +30,32 @@ The structure of this repository is as following:
 
 ## Training and inference instructions 
 
-### 1. Install libraries and dependencies: 
-- create `conda` environemt:
+### 1. Create conda environment and install dependencies: 
+
+Create `conda` environemt:
 ```
 conda create --name lsr python=3.9.12
 conda activate lsr
 ```
-- install dependencies with `pip`
+Install dependencies with `pip`
 ```
 pip install -r requirements.txt
 ```
+
 ### 2. Downwload/generate datasets
+ We have included all pre-defined dataset configurations under `lsr/configs/dataset`. Before starting training, ensure that you have the `ir_datasets` and (huggingface) `datasets` libraries installed, as the framework will automatically download and store the necessary data to the correct directories.
 
-Our framework provides the flexibility to load datasets from various sources, including local datasets hosted on your machine, datasets hosted on remote servers accessible via a link, datasets provided by `ir_datasets`, and datasets provided by Hugging Face's `dataset`.
+For datasets from `ir_datasets`, the downloaded files are saved by default at `~/.ir_datasets/`. You can modify this path by changing the `IR_DATASETS_HOME` environment variable.
 
-We have included all pre-defined dataset configurations you need to reproduce our experiments under `lsr/configs/dataset`. For publicly available datasets, our framework automatically downloads and places them in the correct directories. However, for private or licensed datasets or datasets requiring additional preprocessing, you will need to manually obtain the files and place them in the appropriate directory.
+Similarly, for datasets from the HuggingFace's `datasets`, the downloaded files are stored at `~/.cache/huggingface/datasets` by default. To specify a different cache directory, set the `HF_DATASETS_CACHE` environment variable. 
+
+To train a customed model on your own dataset, please use the sample configurations under `lsr/config/dataset` as templates. Overall, you need three important files (see `lsr/dataset_utils` for the file format): 
+- document collection: maps `document_id` to `document_text` 
+- queries: maps `query_id` to `query_text`
+- train triplets or scored pairs:
+    - train triplets, used for contrastive learning, contains a list of <`query_id`, `positive_document_id`, `negative_document_id`> triplets.
+    - scored_pairs, used for distillation training, contain pairs of <`query`, `document_id`> with a relevance score.  
+
 
 
 <!-- #### 2.1 Hard negatives and  CE's scores for distillation
@@ -65,17 +76,21 @@ To expand the passges with an external model (docT5query or TILDE), you can use 
 For training DeepCT model, the term-recall dataset derived from MSMARCO relevant query-passage pairs could be downloaded [here](http://boston.lti.cs.cmu.edu/appendices/arXiv2019-DeepCT-Zhuyun-Dai/data/myalltrain.relevant.docterm_recall) -->
 
 ### 3. Train a model 
-Before starting the training process, make sure you have downloaded all the necessary dependencies and dataset, and have placed them in the correct directories. Once you have completed these steps, you can begin training by entering the following command in your terminal:
+
+To train a LSR model, you can just simply run the following command:
 
 ```bash
 python -m lsr.train +experiment=sparta_msmarco_distil \
-training_arguments.fp16=True resume_from_checkpoint=False
+training_arguments.fp16=True 
 ```
-In this command, `sparta_msmarco_distil` refers to the experiment configuration file located at `lsr/configs/experiment/sparta_msmarco_distil.yaml`. If you wish to use a different experiment, simply change this value to the name of the desired configuration file in the same directory.
 
-Please note that we use `wandb` to monitor the training process, including loss, regularization, query length, and document length. If you wish to disable this feature, you can do so by modifying the configuration file. Alternatively, you can follow the instructions provided in this [link](https://docs.wandb.ai/ref/cli/wandb-login) to set up wandb.
+In this command, `sparta_msmarco_distil` refers to the experiment configuration file located at `lsr/configs/experiment/sparta_msmarco_distil.yaml`. If you wish to use a different experiment, simply change this value to the name of the desired configuration file under `lsr/configs/experiment`.
+
+Please note that we use `wandb` (by default) to monitor the training process, including loss, regularization, query length, and document length. If you wish to disable this feature, you can do so by adding `training_arguments.report_to='none'` to the above command. Alternatively, you can follow the instructions [here](https://docs.wandb.ai/ref/cli/wandb-login) to set up wandb.
+
 
 ### 4. Run inference on MSMARCO dataset 
+
 When the training finished, you can use our inference scripts to generate new queries and documents as following: 
 
 #### 4.1 Generate queries
@@ -154,15 +169,15 @@ Results in Table 3 are the outputs of following experiments:
 |  Method  | Configuration  |
 | :-------- | :--------------|
 | DeepCT | `lsr/configs/experiment/deepct_msmarco_term_level.yaml` |
-| uniCOIL| `lsr/configs/experiment/unicoil_multiple_negative.yaml` |
-| uniCOIL<sub>dT5q</sub>| `lsr/configs/experiment/unicoil_doct5query_multiple_negative.yaml` | 
-| uniCOIL<sub>tilde</sub>| `lsr/configs/experiment/unicoil_tilde_multiple_negative.yaml` | 
+| uniCOIL| `lsr/configs/experiment/unicoil_msmarco_multiple_negative.yaml` |
+| uniCOIL<sub>dT5q</sub>| `lsr/configs/experiment/unicoil_doct5query_msmarco_multiple_negative.yaml` | 
+| uniCOIL<sub>tilde</sub>| `lsr/configs/experiment/unicoil_tilde_msmarco_multiple_negative.yaml` | 
 | EPIC | `lsr/configs/experiment/epic_original.yaml`| 
 | DeepImpact | `lsr/configs/experiment/deep_impact_original.yaml` | 
-| TILDE<sub>v2</sub>| `lsr/configs/experiment/tildev2_multiple_negative.yaml` |
+| TILDE<sub>v2</sub>| `lsr/configs/experiment/tildev2_msmarco_multiple_negative.yaml` |
 | Sparta | `lsr/configs/experiment/sparta_original.yaml` |
-| Splade<sub>max</sub>| `lsr/configs/experiment/splade_multiple_negative.yaml` |
-| distilSplade<sub>max</sub>|`lsr/configs/experiment/splade_msmarco_distil_0.1_0.08.yaml`|
+| Splade<sub>max</sub>| `lsr/configs/experiment/splade_msmarco_multiple_negative.yaml` |
+| distilSplade<sub>max</sub>|`lsr/configs/experiment/splade_msmarco_distil_flops_0.1_0.08.yaml`|
 
 
 * **RQ2: How do LSR methods perform with recent advanced training
@@ -179,23 +194,37 @@ Results in Table 4 are the outputs of following experiments:
 | DeepImpact | `lsr/configs/experiment/deep_impact_msmarco_distil.yaml` | 
 | TILDE<sub>v2</sub>| `lsr/configs/experiment/tildev2_msmarco_distil.yaml` |
 | Sparta | `lsr/configs/experiment/sparta_msmarco_distil.yaml` |
-| distilSplade<sub>max</sub>|`lsr/configs/experiment/splade_msmarco_distil.yaml` |
-| distilSplade<sub>sep</sub>| `lsr/configs/experiment/splade_asm_msmarco_distil_0.1_0.08.yaml`|
+| distilSplade<sub>max</sub>|`lsr/configs/experiment/splade_msmarco_distil_flops_0.1_0.08.yaml` |
+| distilSplade<sub>sep</sub>| `lsr/configs/experiment/splade_asm_msmarco_distil_flops_0.1_0.08.yaml`|
 
 * **RQ3: How does the choice of encoder architecture and regularization
 affect results?**
 
 Results in Table 5 are the outputs of following experiments: 
+- MSMARCO Passage
 
 |  Effect  |  Row | Configuration  |
 | :-------- | :---- | :-------------- |
 | Doc weighting | 1a | Before: `lsr/configs/experiment/splade_asm_dbin_msmarco_distil.yaml` <br> After: `lsr/configs/experiment/splade_asm_dmlp_msmarco_distil.yaml`  |
 |  | 1b | Before: `lsr/configs/experiment/unicoil_dbin_tilde_msmarco_distil.yaml` <br> After: `lsr/configs/experiment/unicoil_tilde_msmarco_distil.yaml` |
 | Query weighting | 2a | Before: `lsr/configs/experiment/tildev2_msmarco_distil.yaml` <br> After: `lsr/configs/experiment/unicoil_tilde_msmarco_distil.yaml`|
-|  | 2b | Before: `lsr/configs/experiment/epic_noq_msmarco_distil.yaml` <br> After: `lsr/configs/experiment/epic_msmarco_distil.yaml`|
-| Doc expansion | 3a | Before: `lsr/configs/experiment/splade_asm_dmlp_msmarco_distil.yaml` <br> After: `lsr/configs/experiment/unicoil_tilde_msmarco_distil.yaml`|
-|  | 3b | Before: `lsr/configs/experiment/unicoil_msmarco_distil.yaml` <br> After: `lsr/configs/experiment/splade_asm_msmarco_distil_0.1_0.08.yaml` |
-|  | 3c | Before: `lsr/configs/experiment/unicoil_msmarco_distil.yaml` <br> After: `lsr/configs/experiment/splade_asm_qmlp_msmarco_distil_0.0_0.08.yaml`|
-| Query expansion | 4a | Before: `lsr/configs/experiment/splade_asm_qmlp_msmarco_distil_0.0_0.08.yaml` <br> After: `lsr/configs/experiment/splade_asm_msmarco_distil_0.1_0.08.yaml`|
-|  | 4b | Before: ``lsr/configs/experiment/unicoil_tilde_msmarco_distil.yaml`` <br> After: `lsr/configs/experiment/splade_asm_dmlp_msmarco_distil.yaml`|
-| Regularization | 5a | Before: `lsr/configs/experiment/splade_asm_qmlp_msmarco_distil_0.0_0.08.yaml` <br> After: `lsr/configs/experiment/splade_asm_qmlp_msmarco_distil_0.0_0.00.yaml`|
+|  | 2b | Before: `lsr/configs/experiment/epic_qbin_msmarco_distil.yaml` <br> After: `lsr/configs/experiment/epic_msmarco_distil.yaml`|
+| Doc expansion | 3a | Before: `lsr/configs/experiment/splade_asm_dmlp_msmarco_distil.yaml` <br> After: `lsr/configs/experiment/splade_asm_msmarco_distil_flops_0.1_0.08.yaml`|
+|  | 3b | Before: `lsr/configs/experiment/unicoil_msmarco_distil.yaml` <br> After: `lsr/configs/experiment/splade_asm_qmlp_msmarco_distil_flops_0.0_0.08.yaml` |
+| Query expansion | 4a | Before: `lsr/configs/experiment/unicoil_tilde_msmarco_distil.yaml` <br> After: `lsr/configs/experiment/splade_asm_dmlp_msmarco_distil.yaml`|
+|  | 4b | Before: `lsr/configs/experiment/unicoil_tilde_msmarco_distil.yaml` <br> After: `lsr/configs/experiment/splade_asm_dmlp_msmarco_distil.yaml`|
+| Regularization | 5a | Before: `lsr/configs/experiment/splade_asm_qmlp_msmarco_distil_flops_0.0_0.08.yaml` <br> After: `lsr/configs/experiment/splade_asm_qmlp_msmarco_distil_flops_0.0_0.00.yaml`|
+
+- Tripclick
+
+|  Effect  |  Row | Configuration  |
+| :-------- | :---- | :-------------- |
+| Doc weighting | 1a | Before: `lsr/configs/experiment/qmlp_dbin_tripclick_multiple_negative.yaml` <br> After: `lsr/configs/experiment/unicoil_tripclick_multiple_negative.yaml`  |
+|  | 1b | Before: `lsr/configs/experiment/qmlp_dexpbin_tripclick_multiple_negative.yaml` <br> After: `lsr/configs/experiment/unicoil_tilde_tripclick_multiple_negative.yaml` |
+| Query weighting | 2a | Before: `lsr/configs/experiment/sparta_tripclick_multiple_negative.yaml` <br> After: `lsr/configs/experiment/qmlp_dmlm_tripclick_hard_negative_0.0_0.0.yaml`|
+|  | 2b | Before: `lsr/configs/experiment/qbin_dmlp_tripclick_multiple_negative.yaml` <br> After: `lsr/configs/experiment/unicoil_tripclick_multiple_negative.yaml`|
+| Doc expansion | 3a | Before: `lsr/configs/experiment/qmlm_dmlp_tripclick_hard_negative_l1_0.001.yaml` <br> After: `lsr/configs/experiment/splade_asm_tripclick_multiple_negative_l1_0.001_0.00001.yaml`|
+|  | 3b | Before: `lsr/configs/experiment/unicoil_tripclick_multiple_negative.yaml` <br> After: `lsr/configs/experiment/qmlp_dmlm_tripclick_hard_negative_l1_0.0_0.00001.yaml` |
+| Query expansion | 4a | Before: `lsr/configs/experiment/qmlp_dmlm_tripclick_hard_negative_l1_0.0_0.00001.yaml` <br> After: `lsr/configs/experiment/splade_asm_tripclick_multiple_negative_l1_0.001_0.00001.yaml`|
+|  | 4b | Before: `lsr/configs/experiment/unicoil_tripclick_multiple_negative.yaml` <br> After: `lsr/configs/experiment/qmlm_dmlp_tripclick_hard_negative_l1_0.001.yaml`|
+| Regularization | 5a | Before: `lsr/configs/experiment/epic_tripclick_multiple_negative.yaml` <br> After: `lsr/configs/experiment/qmlp_dmlm_tripclick_hard_negative_l1_0.0_0.00001.yaml`|

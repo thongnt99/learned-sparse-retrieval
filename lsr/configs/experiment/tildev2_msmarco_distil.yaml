@@ -1,0 +1,6 @@
+# @package _global_
+defaults:
+  - override /dataset@train_dataset: msmarco_triplet_distil
+  - override /loss: distil_margin_mse
+  - override /model: deepimpact
+exp_name: tildev2_msmarco_distil

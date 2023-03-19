@@ -1,0 +1,25 @@
+# @package _global_
+defaults:
+  - override /dataset@train_dataset: tripclick_triplets
+  - override /loss: multiple_negative_loss 
+  - override /model: qmlp_dmlm
+exp_name: qmlp_dmlm_triplick_hard_negative_0_0 
+query_max_length: 250
+doc_max_length: 512
+data_collator:
+  _target_: lsr.datasets.data_collator.DataCollator
+trainer: 
+  data_type: multi-negative
+training_arguments:
+  fp16: True 
+  per_device_train_batch_size: 16
+  learning_rate: 5e-6
+  warmup_steps: 0
+  max_steps: -1
+  save_steps: 20000
+  warmup_ratio: 0.1
+  num_train_epochs: 1
+  dataloader_num_workers: 16 
+  dataloader_drop_last: True
+tokenizer:
+  tokenizer_name: distilbert-base-uncased

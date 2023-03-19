@@ -18,7 +18,7 @@ class TripletIdsDataset(Dataset):
 
     def __getitem__(self, idx):
         qid, pos_id, neg_id = self.triplets[idx]
-        return (self.queries_dict[qid], self.docs_dict[pos_id], self.docs_dict[neg_id])
+        return self.queries_dict[qid], [self.docs_dict[pos_id], self.docs_dict[neg_id]]
 
     def __len__(self):
         return len(self.triplets)

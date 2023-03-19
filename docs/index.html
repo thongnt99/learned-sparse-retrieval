@@ -13,6 +13,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet" />
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="css/styles.css" rel="stylesheet" />
+    <style>
+        .encoder-desc {
+            text-align: left;
+        }
+    </style>
 </head>
 
 <body>
@@ -37,15 +42,22 @@
         <div class="container px-lg-5">
             <div class="p-4 p-lg-5 bg-light rounded-3 text-center">
                 <div class="m-4 m-lg-5">
-                    <h1 class="display-5 fw-bold">A warm welcome!</h1>
-                    <p class="fs-4">A unified framework for learned sparse retrieval</p>
-                    <a class="btn btn-primary btn-lg" href="#!">Call to action</a>
+                    <h1 class="display-5 fw-bold">Learned Sparse Retrieval Framework</h1>
+                    <p class="fs-4">
+                        A framework for training and evaluating various LSR architectures.
+                    </p>
+                    <iframe
+                        src="https://ghbtns.com/github-btn.html?user=thongnt99&repo=learned-sparse-retrieval/&type=star&count=true&size=large"
+                        frameborder="0" scrolling="0" width="170" height="30" title="GitHub"></iframe>
                 </div>
             </div>
         </div>
     </header>
     <!-- Page Content-->
     <section class="pt-4">
+        <div class="container px-lg-5">
+
+        </div>
         <div class="container px-lg-5">
             <!-- Page Features-->
             <div class="row gx-lg-5">
@@ -54,8 +66,9 @@
                         <div class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0">
                             <div class="feature bg-primary bg-gradient text-white rounded-3 mb-4 mt-n4"><i
                                     class="bi bi-collection"></i></div>
-                            <h2 class="fs-4 fw-bold">Fresh new layout</h2>
-                            <p class="mb-0">With Bootstrap 5, we've created a fresh new layout for this template!</p>
+                            <h2 class="fs-4 fw-bold">Binary Encoder</h2>
+                            <p class="mb-0 encoder-desc">The binary encoder assigns a weight of 1 to terms in the input
+                                query or document and 0 to the rest.</p>
                         </div>
                     </div>
                 </div>
@@ -64,18 +77,9 @@
                         <div class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0">
                             <div class="feature bg-primary bg-gradient text-white rounded-3 mb-4 mt-n4"><i
                                     class="bi bi-cloud-download"></i></div>
-                            <h2 class="fs-4 fw-bold">Free to download</h2>
-                            <p class="mb-0">As always, Start Bootstrap has a powerful collectin of free templates.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6 col-xxl-4 mb-5">
-                    <div class="card bg-light border-0 h-100">
-                        <div class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0">
-                            <div class="feature bg-primary bg-gradient text-white rounded-3 mb-4 mt-n4"><i
-                                    class="bi bi-card-heading"></i></div>
-                            <h2 class="fs-4 fw-bold">Jumbotron hero header</h2>
-                            <p class="mb-0">The heroic part of this template is the jumbotron hero header!</p>
+                            <h2 class="fs-4 fw-bold">MLP Encoder</h2>
+                            <p class="mb-0 encoder-desc">The MLP encoder uses a Linear layer on top of the Transformer's
+                                last hidden states to score terms in the input sequence.</p>
                         </div>
                     </div>
                 </div>
@@ -84,12 +88,37 @@
                         <div class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0">
                             <div class="feature bg-primary bg-gradient text-white rounded-3 mb-4 mt-n4"><i
                                     class="bi bi-bootstrap"></i></div>
-                            <h2 class="fs-4 fw-bold">Feature boxes</h2>
-                            <p class="mb-0">We've created some custom feature boxes using Bootstrap icons!</p>
+                            <h2 class="fs-4 fw-bold">expMLP Encoder</h2>
+                            <p class="mb-0 encoder-desc">ExpMLP requires a pre-processing step to expand documents with
+                                relevant terms, and then uses the MLP encoder to store both original and expanded terms
+                            </p>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-6 col-xxl-4 mb-5">
+                    <div class="card bg-light border-0 h-100">
+                        <div class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0">
+                            <div class="feature bg-primary bg-gradient text-white rounded-3 mb-4 mt-n4"><i
+                                    class="bi bi-card-heading"></i></div>
+                            <h2 class="fs-4 fw-bold">MLM Encoder</h2>
+                            <p class="mb-0 encoder-desc">The MLM encoder uses the MLM head in the Transformer Masked
+                                Language Model to score terms and expand the input to relevant terms, end-to-end.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class=" col-lg-6 col-xxl-4 mb-5">
+                    <div class="card bg-light border-0 h-100">
+                        <div class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0">
+                            <div class="feature bg-primary bg-gradient text-white rounded-3 mb-4 mt-n4"><i
+                                    class="bi bi-bootstrap"></i></div>
+                            <h2 class="fs-4 fw-bold">CLS_MLM Encoder</h2>
+                            <p class="mb-0 encoder-desc">CLS_MLM encoder uses the same architecture as the MLM encoder;
+                                however, only the logit of the CLS token is used for term weighting and expansion.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="col-lg-6 col-xxl-4 mb-5">
                     <div class="card bg-light border-0 h-100">
                         <div class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0">
                             <div class="feature bg-primary bg-gradient text-white rounded-3 mb-4 mt-n4"><i
@@ -109,7 +138,7 @@
                             </p>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
     </section>

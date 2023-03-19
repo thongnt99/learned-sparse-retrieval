@@ -8,7 +8,7 @@ import pickle
 from pathlib import Path
 import requests
 import sys
-import os
+from datasets import load_dataset
 
 
 IRDS_PREFIX = "irds:"
@@ -28,6 +28,14 @@ def read_collection(collection_path: str, text_fields=["text"]):
             texts = [getattr(doc, field) for field in text_fields]
             text = " ".join(texts)
             doc_dict[doc_id] = text
+    elif collection_path.startswith(HFG_PREFIX):
+        hfg_name = collection_path.replace(HFG_PREFIX, "")
+        dataset = load_dataset(hfg_name)
+        for row in tqdm(
+            dataset["passage"],
+            desc=f"Loading data from HuggingFace datasets: {hfg_name}",
+        ):
+            doc_dict[row["id"]] = row["text"]
     else:
         with open(collection_path, "r") as f:
             for line in tqdm(f, desc=f"Reading doc collection from {collection_path}"):

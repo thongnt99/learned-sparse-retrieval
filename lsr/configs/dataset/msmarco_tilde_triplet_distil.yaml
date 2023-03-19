@@ -1,0 +1,9 @@
+_target_: lsr.datasets.TripletIDDistilDataset
+collection_path: 'hfds:lsr42/msmarco-passage-tilde'
+#data/msmarco/full_collection/raw.tsv
+queries_path: 'irds:msmarco-passage/train/judged'
+#data/msmarco/train_queries/queries/raw.tsv
+qrels_path:  'irds:msmarco-passage/train/judged'
+#data/msmarco/train_queries/qrels.json
+ce_score_dict: 'hfds:sentence-transformers/msmarco-hard-negatives'
+#data/msmarco/hard_negatives_scores/cross-encoder-ms-marco-MiniLM-L-6-v2-scores.pkl.gz

@@ -1,0 +1,21 @@
+# @package _global_
+defaults:
+  - override /dataset@train_dataset: msmarco_doct5query_multiple_negative
+  - override /loss: multiple_negative_loss 
+  - override /model: unicoil
+exp_name: unicoil_doct5query_msmarco_multiple_negative 
+data_collator:
+  _target_: lsr.datasets.data_collator.DataCollator
+training_arguments:
+  fp16: True 
+  per_device_train_batch_size: 8 
+  learning_rate: 5e-6
+  warmup_steps: 0
+  max_steps: -1
+  save_steps: 10000
+  warmup_ratio: 0.1
+  num_train_epochs: 5
+  dataloader_num_workers: 16 
+  dataloader_drop_last: True
+tokenizer:
+  tokenizer_name: distilbert-base-uncased

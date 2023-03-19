@@ -1,0 +1,4 @@
+_target_: lsr.datasets.TripletIdsDataset
+collection_path: 'irds:tripclick/train/hofstaetter-triples'
+queries_path: 'irds:tripclick/train/hofstaetter-triples'
+triplet_ids_path: 'irds:tripclick/train/hofstaetter-triples'

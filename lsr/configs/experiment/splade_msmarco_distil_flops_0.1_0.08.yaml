@@ -5,7 +5,11 @@ defaults:
   - override /model: splade
 exp_name: splade_msmarco_distil_flops_0.1_0.08
 loss:
-  q_regularizer:
+  q_regularizer: 
+    _target_: lsr.losses.regularizer.FLOPs
     weight: 0.1
+    T: 50000
   d_regularizer:
+    _target_: lsr.losses.regularizer.FLOPs
     weight: 0.08
+    T: 50000

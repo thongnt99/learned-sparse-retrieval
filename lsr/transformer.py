@@ -33,7 +33,7 @@ index = index_pipeline.index(dataset.get_corpus_iter())
 """
 
 class LSR(pt.Transformer):
-    def __init__(self, model_name, device=None, batch_size=32, text_field='text', fp16=False):
+    def __init__(self, model_name, device=None, batch_size=32, text_field='text', fp16=False, topk=None):
         self.model_name = model_name
         if device is None:
             device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -45,9 +45,12 @@ class LSR(pt.Transformer):
         self.all_tokens = np.array(self.tokenizer.convert_ids_to_tokens(all_token_ids))
         self.batch_size = batch_size
         self.text_field = text_field
+        self.topk = topk
 
-    def encode_queries(self, texts, out_fmt='dict'):
+    def encode_queries(self, texts, out_fmt='dict', topk=None):
         outputs = []
+        if out_fmt != 'dict':
+            assert topk is None, "topk only supported when out_fmt='dict'"
         with ExitStack() as stack:
             stack.enter_context(torch.no_grad())
             if self.fp16:
@@ -57,7 +60,7 @@ class LSR(pt.Transformer):
                 enc = {k: v.to(self.device) for k, v in enc.items()}
                 res = self.model.encode_queries(**enc).cpu().float()
                 if out_fmt == 'dict':
-                    res = self.vec2dicts(res)
+                    res = self.vec2dicts(res, topk=topk)
                     outputs.extend(res)
                 else:
                     outputs.append(res.numpy())
@@ -67,8 +70,10 @@ class LSR(pt.Transformer):
             outputs = list(itertools.chain.from_iterable(outputs))
         return outputs
 
-    def encode_docs(self, texts, out_fmt='dict'):
+    def encode_docs(self, texts, out_fmt='dict', topk=None):
         outputs = []
+        if out_fmt != 'dict':
+            assert topk is None, "topk only supported when out_fmt='dict'"
         with ExitStack() as stack:
             stack.enter_context(torch.no_grad())
             if self.fp16:
@@ -78,7 +83,7 @@ class LSR(pt.Transformer):
                 enc = {k: v.to(self.device) for k, v in enc.items()}
                 res = self.model.encode_docs(**enc)
                 if out_fmt == 'dict':
-                    res = self.vec2dicts(res)
+                    res = self.vec2dicts(res, topk=topk)
                     outputs.extend(res)
                 else:
                     outputs.append(res.cpu().float().numpy())
@@ -88,7 +93,7 @@ class LSR(pt.Transformer):
             outputs = list(itertools.chain.from_iterable(outputs))
         return outputs
 
-    def vec2dicts(self, batch_output):
+    def vec2dicts(self, batch_output, topk=None):
         rtr = []
         idxs, cols = torch.nonzero(batch_output, as_tuple=True)
         weights = batch_output[idxs, cols]
@@ -100,15 +105,18 @@ class LSR(pt.Transformer):
             mask = (idxs==i)
             col = cols[mask]
             w = weights[mask]
+            if topk is not None:
+                col = col[:topk]
+                w = w[:topk]
             d = {self.all_tokens[k]: v for k, v in zip(col.cpu().tolist(), w.cpu().tolist())}
             rtr.append(d)
         return rtr
 
-    def query_encoder(self, matchop=False, sparse=True):
-        return LSRQueryEncoder(self, matchop, sparse=sparse)
+    def query_encoder(self, matchop=False, sparse=True, topk=None):
+        return LSRQueryEncoder(self, matchop, sparse=sparse, topk=topk or self.topk)
 
-    def doc_encoder(self, text_field=None, sparse=True):
-        return LSRDocEncoder(self, text_field or self.text_field, sparse=sparse)
+    def doc_encoder(self, text_field=None, sparse=True, topk=None):
+        return LSRDocEncoder(self, text_field or self.text_field, sparse=sparse, topk=topk or self.topk)
 
     def scorer(self, text_field=None):
         return LSRScorer(self, text_field or self.text_field)
@@ -124,15 +132,17 @@ class LSR(pt.Transformer):
 
 
 class LSRQueryEncoder(pt.Transformer):
-    def __init__(self, lsr: LSR, matchop=False, sparse=True):
+    def __init__(self, lsr: LSR, matchop=False, sparse=True, topk=None):
         self.lsr = lsr
         if not sparse:
             assert not matchop, "matchop only supported when sparse=True"
+            assert topk is None, "topk only supported when sparse=True"
         self.matchop = matchop
         self.sparse = sparse
+        self.topk = topk
 
     def encode(self, texts):
-        return self.lsr.encode_queries(texts, out_fmt='dict' if self.sparse else 'np_list')
+        return self.lsr.encode_queries(texts, out_fmt='dict' if self.sparse else 'np_list', topk=self.topk)
 
     def transform(self, inp):
         res = self.encode(inp['query'])
@@ -146,13 +156,16 @@ class LSRQueryEncoder(pt.Transformer):
 
 
 class LSRDocEncoder(pt.Transformer):
-    def __init__(self, lsr: LSR, text_field, sparse=True):
+    def __init__(self, lsr: LSR, text_field, sparse=True, topk=None):
         self.lsr = lsr
         self.text_field = text_field
         self.sparse = sparse
+        if not sparse:
+            assert topk is None, "topk only supported when sparse=True"
+        self.topk = topk
 
     def encode(self, texts):
-        return self.lsr.encode_docs(texts, out_fmt='dict' if self.sparse else 'np_list')
+        return self.lsr.encode_docs(texts, out_fmt='dict' if self.sparse else 'np_list', topk=self.topk)
 
     def transform(self, inp):
         res = self.encode(inp[self.text_field])

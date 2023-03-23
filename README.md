@@ -130,7 +130,7 @@ Note:
 #### 5.1 Download and install our modified Anserini indexing software:
 We made simple changes in the indexing procedure in Anserini to improve the indexing speed (by `10x`). 
 In the old method, Anserini first creates fake documents from JSON weight files (e.g., `{"hello": 3}`) by repeating the term (e.g., `"helo hello hello"`) and then indexes these documents as regular documents. The process of creating these fake documents can cause a substantial delay in indexing LSR where the number of terms and weights are usually large. To get rid of this issue, we leverage the [FeatureField](https://lucene.apache.org/core/9_3_0/core/org/apache/lucene/document/FeatureField.html) in Lucene to inject the (term, weight) pairs directly to the index. The change is simple but quite effective, especially when you have to index multiple times (as in the paper).   
-You can download the modified Anserini version [here](https://anonymous.4open.science/r/anserini-lsr-AD27), then follow the instructions in the [README](https://anonymous.4open.science/r/anserini-lsr-AD27/README.md) for installation. If the tests fail, you can skip it by adding `-Dmaven.test.skip=true`.
+You can download the modified Anserini version [here](https://github.com/thongnt99/anserini-lsr), then follow the instructions in the [README](https://github.com/thongnt99/anserini-lsr#readme) for installation. If the tests fail, you can skip it by adding `-Dmaven.test.skip=true`.
 
 When the installation is done, you can continue with the next steps. 
 #### 5.2 Index with Anserini

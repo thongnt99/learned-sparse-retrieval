@@ -4,10 +4,9 @@
 
 The framework provides a simple yet effective toolkit for defining, training, and evaluating learned sparse retrieval methods. The framework is composed of standalone modules, allowing for easy mixing and matching of different modules or integration with your own implementation. This provides flexibility to experiment and customize the retrieval model to meet your specific needs.
 
-The structure of this repository is as following: 
+The structure of the `lsr` package is as following: 
 
 ```.
-├── analysis #scripts that support experimental analysis
 ├── configs  #configuration of different components
 │   ├── dataset 
 │   ├── experiment #define exp details: dataset, loss, model, hp 
@@ -15,15 +14,13 @@ The structure of this repository is as following:
 │   ├── model
 │   └── wandb
 ├── datasets    #implementations of dataset loading & collator
-├── evaluate_bier   #code to evaluate on beir benchmark
 ├── losses  #implementations of different losses + regularizer
 ├── models  #implementations of different models
-├── preprocess  #script to preprocess data (e.g., expand psg)
-├── tests   #unit tests for some components
 ├── tokenizer   #a wrapper of HF's tokenizers
 ├── trainer     #trainer for training 
 └── utils   #common utilities used in different places
 ```
+
 * The list of all configurations used in the paper could be found [here](#list-of-configurations-used-in-the-paper)
 
 * The instruction for running experiments could be found [here](#training-and-inference-instructions)
@@ -228,3 +225,17 @@ Results in Table 5 are the outputs of following experiments:
 | Query expansion | 4a | Before: `lsr/configs/experiment/qmlp_dmlm_tripclick_hard_negative_l1_0.0_0.00001.yaml` <br> After: `lsr/configs/experiment/splade_asm_tripclick_multiple_negative_l1_0.001_0.00001.yaml`|
 |  | 4b | Before: `lsr/configs/experiment/unicoil_tripclick_multiple_negative.yaml` <br> After: `lsr/configs/experiment/qmlm_dmlp_tripclick_hard_negative_l1_0.001.yaml`|
 | Regularization | 5a | Before: `lsr/configs/experiment/epic_tripclick_multiple_negative.yaml` <br> After: `lsr/configs/experiment/qmlp_dmlm_tripclick_hard_negative_l1_0.0_0.00001.yaml`|
+
+## Citing and Authors
+If you find this repository helpful, feel free to cite our paper [A Unified Framework for Learned Sparse Retrieval](https://link.springer.com/chapter/10.1007/978-3-031-28241-6_7)
+
+```bibtex
+@inproceedings{nguyen2023unified,
+  title={A Unified Framework for Learned Sparse Retrieval},
+  author={Nguyen, Thong and MacAvaney, Sean and Yates, Andrew},
+  booktitle={Advances in Information Retrieval: 45th European Conference on Information Retrieval, ECIR 2023, Dublin, Ireland, April 2--6, 2023, Proceedings, Part III},
+  pages={101--116},
+  year={2023},
+  organization={Springer}
+}
+```

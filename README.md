@@ -80,10 +80,11 @@ To train a LSR model, you can just simply run the following command:
 python -m lsr.train +experiment=sparta_msmarco_distil \
 training_arguments.fp16=True 
 ```
-
-In this command, `sparta_msmarco_distil` refers to the experiment configuration file located at `lsr/configs/experiment/sparta_msmarco_distil.yaml`. If you wish to use a different experiment, simply change this value to the name of the desired configuration file under `lsr/configs/experiment`.
-
-Please note that we use `wandb` (by default) to monitor the training process, including loss, regularization, query length, and document length. If you wish to disable this feature, you can do so by adding `training_arguments.report_to='none'` to the above command. Alternatively, you can follow the instructions [here](https://docs.wandb.ai/ref/cli/wandb-login) to set up wandb.
+Please note that:
+- In this command, `sparta_msmarco_distil` refers to the experiment configuration file located at `lsr/configs/experiment/sparta_msmarco_distil.yaml`. If you wish to use a different experiment, simply change this value to the name of the desired configuration file under `lsr/configs/experiment`.
+- You may notice a `+` before `experiment=sparta_msmarco_distil`. This is a convention in Hydra to add a new configuration key (in this case, experiment) that is not yet defined in *lsr/configs/config.yaml*. If you want to override an existing key (e.g., `training_arguments.fp16`), you don't need to use the `+` symbol
+- We trained some models using *NVIDIA A100 80GB*, allowing us to use large batch sizes (e.g., *128*). To replicate our experiments on smaller GPUs, reduce the batch size and increase the gradient accumulation steps (e.g., add `training_arguments.per_device_train_batch_size=64 +training_arguments.gradient_accumulation_steps=2` to your training command). Note: With models (e.g., Splade) using sparse regularizers during training, the results may still differ slightly since we don't take accumulation steps into account for adjusting regularization weights.   
+- We use `wandb` (by default) to monitor the training process, including loss, regularization, query length, and document length. If you wish to disable this feature, you can do so by adding `training_arguments.report_to='none'` to the above command. Alternatively, you can follow the instructions [here](https://docs.wandb.ai/ref/cli/wandb-login) to set up wandb.
 
 
 ### 4. Run inference on MSMARCO dataset 

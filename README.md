@@ -39,7 +39,7 @@ Install dependencies with `pip`
 pip install -r requirements.txt
 ```
 
-### 2. Downwload/generate datasets
+### 2. Downwload/Prepare datasets
  We have included all pre-defined dataset configurations under `lsr/configs/dataset`. Before starting training, ensure that you have the `ir_datasets` and (huggingface) `datasets` libraries installed, as the framework will automatically download and store the necessary data to the correct directories.
 
 For datasets from `ir_datasets`, the downloaded files are saved by default at `~/.ir_datasets/`. You can modify this path by changing the `IR_DATASETS_HOME` environment variable.

@@ -13,6 +13,7 @@ import wandb
 import time
 import datetime
 import logging
+import ir_datasets
 
 logger = logging.getLogger(__name__)
 
@@ -41,40 +42,58 @@ def inference(cfg: DictConfig,):
     output_path = Path(cfg.output_dir).joinpath(cfg.output_file)
     file_writer = open(output_path, "w")
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    logger.log(f"Running inference on {device}")
-    logger.log(f"Loading model from {cfg.model_path}")
+    logger.log(msg=f"Running inference on {device}",level=1)
+    logger.log(msg=f"Loading model from {cfg.model_path}",level=1)
     model = DualSparseEncoder.from_pretrained(cfg.model_path)
     model.eval()
     model.to(device)
     tokenizer_path = os.path.join(cfg.model_path, "tokenizer")
-    logger.log(f"Loading tokenizer from {tokenizer_path}")
+    logger.log(msg=f"Loading tokenizer from {tokenizer_path}",level=1)
     tokenizer = Tokenizer.from_pretrained(tokenizer_path)
     ids = []
     texts = []
-    with open(cfg.input_path, "r") as f:
-        if cfg.input_format == "tsv":
-            for line in tqdm(f, desc=f"Reading data from {cfg.input_path}"):
-                try:
-                    idx, text = line.strip().split("\t")
+    if cfg.input_format in ("tsv","json"):
+        with open(cfg.input_path, "r") as f:
+            if cfg.input_format == "tsv":
+                for line in tqdm(f, desc=f"Reading data from {cfg.input_path}"):
+                    try:
+                        idx, text = line.strip().split("\t")
+                        ids.append(idx)
+                        texts.append(text)
+                    except:
+                        pass
+            elif cfg.input_format == "json":
+                for line in tqdm(f, desc=f"Reading data from {cfg.input_path}"):
+                    line = json.loads(line.strip())
+                    idx = line["_id"]
+                    if "title" in line:
+                        text = (line["title"] + " " + line["text"]).strip()
+                    else:
+                        text = line["text"].strip()
                     ids.append(idx)
                     texts.append(text)
-                except:
-                    pass
-        elif cfg.input_format == "json":
-            for line in tqdm(f, desc=f"Reading data from {cfg.input_path}"):
-                line = json.loads(line.strip())
-                idx = line["_id"]
-                if "title" in line:
-                    text = (line["title"] + " " + line["text"]).strip()
-                else:
-                    text = line["text"].strip()
+    else:
+        dataset = ir_datasets.load(cfg.input_path)
+        if cfg.type == "query":
+            for doc in tqdm(dataset.queries_iter(), desc=f"Reading data from ir_datasets {cfg.input_path}"):
+                idx = doc.query_id
+                text = doc.text.strip()
                 ids.append(idx)
                 texts.append(text)
-        assert len(ids) == len(texts)
+        else:
+            for doc in tqdm(dataset.docs_iter(), desc=f"Reading data from ir_datasets {cfg.input_path}"):
+                idx = doc.doc_id
+                try:
+                    text = (doc.title + " " + doc.text).strip()
+                except:
+                    text = (doc.text).strip()
+                ids.append(idx)
+                texts.append(text)
+    assert len(ids) == len(texts)
     all_token_ids = list(range(tokenizer.get_vocab_size()))
     all_tokens = np.array(tokenizer.convert_ids_to_tokens(all_token_ids))
     for idx in tqdm(range(0, len(ids), cfg.batch_size)):
-        logger.log({"batch": idx})
+        logger.log(msg={"batch": idx},level=1)
         batch_texts = texts[idx : idx + cfg.batch_size]
         batch_ids = ids[idx : idx + cfg.batch_size]
         batch_tkn = tokenizer(
@@ -142,4 +161,4 @@ if __name__ == "__main__":
     start_time = time.time()
     inference()
     run_time = time.time() - start_time
-    logger.log(f"Finished! Runing time {str(datetime.timedelta(seconds=666))}")
+    logger.log(msg=f"Finished! Runing time {str(datetime.timedelta(seconds=666))}",level=1)

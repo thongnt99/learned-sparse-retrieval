@@ -3,4 +3,5 @@ tqdm
 torch>=1.6.0
 torchvision
 numpy
+datasets>=2.11.0
 transformers>=4.6.0,<5.0.0

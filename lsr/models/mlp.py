@@ -42,12 +42,12 @@ class TransformerMLPSparseEncoder(SparseEncoder):
         self.linear = nn.Linear(self.model.config.hidden_size, 1)
         self.activation = FunctionalFactory.get(config.activation)
         self.norm = FunctionalFactory.get(config.norm)
-        self.linear.apply(self._init_weights)
+        # self.linear.apply(self._init_weights)
         self.scale = nn.Parameter(torch.tensor(config.scale))
 
-    def _init_weights(self, module):
-        """Initialize the weights (needed this for the inherited from_pretrained method to work)"""
-        torch.nn.init.kaiming_normal(module.weight.data, nonlinearity="relu")
+    # def _init_weights(self, module):
+    #     """Initialize the weights (needed this for the inherited from_pretrained method to work)"""
+    #     torch.nn.init.kaiming_normal(module.weight.data, nonlinearity="relu")
 
     def forward(self, to_scale=False, **kwargs):
         special_tokens_mask = kwargs.pop("special_tokens_mask")

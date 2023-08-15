@@ -96,7 +96,7 @@ class DualSparseEncoder(PreTrainedModel):
         """Save both query and document encoder"""
         self.config.save_pretrained(model_dir)
         if self.config.shared:
-            self.encoder.save_pretrained(model_dir, "/shared_encoder")
+            self.encoder.save_pretrained(model_dir + "/shared_encoder")
         else:
             self.query_encoder.save_pretrained(model_dir + "/query_encoder")
             self.doc_encoder.save_pretrained(model_dir + "/doc_encoder")

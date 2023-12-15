@@ -136,10 +136,10 @@ When the installation is done, you can continue with the next steps.
 #### 5.2 Index with Anserini
 ```
 ./anserini-lsr/target/appassembler/bin/IndexCollection \
--collection JsonTermWeightCollection \
+-collection JsonSparseVectorCollection \
 -input outputs/sparta_distil_sentence_transformers/inference/doc/  \
 -index outputs/sparta_distil_sentence_transformers/index \
--generator TermWeightDocumentGenerator \
+-generator SparseVectorDocumentGenerator \
 -threads 60 -impact -pretokenized
 ```
 Note that you have to change `sparta_distil_sentence_transformers` to the output defined in your experiment configuation flie (here: `lsr/configs/experiment/sparta_msmarco_distil.yaml`)

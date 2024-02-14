@@ -1,5 +1,6 @@
-
 <img src="images/logo.png" width=6%> ![](https://badgen.net/badge/lsr/instructions/red?icon=github) ![](https://badgen.net/badge/python/3.9.12/green?icon=python)
+[![DOI](https://zenodo.org/badge/586806249.svg)](https://zenodo.org/doi/10.5281/zenodo.10659499)
+
 # LSR: A unified framework for efficient and effective learned sparse retrieval
 
 The framework provides a simple yet effective toolkit for defining, training, and evaluating learned sparse retrieval methods. The framework is composed of standalone modules, allowing for easy mixing and matching of different modules or integration with your own implementation. This provides flexibility to experiment and customize the retrieval model to meet your specific needs.

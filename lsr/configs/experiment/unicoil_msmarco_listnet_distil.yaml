@@ -1,0 +1,10 @@
+# @package _global_
+defaults:
+  - override /dataset@train_dataset: msmarco_distil_nils
+  - override /loss: listnet_loss_no_reg
+  - override /model: unicoil
+exp_name: unicoil_listnet_distil_sentence_transformers
+train_dataset:
+  train_group_size: 64
+training_arguments:
+  per_device_train_batch_size: 8 

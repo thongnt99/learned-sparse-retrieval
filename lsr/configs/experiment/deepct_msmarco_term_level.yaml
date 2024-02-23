@@ -3,7 +3,6 @@ defaults:
   - override /dataset@train_dataset: term_recall
   - override /loss: term_mse_loss  
   - override /model: deepct
-exp_name: deepct_term_mse 
 data_collator:
   _target_: lsr.datasets.data_collator.TermRecallCollator
 training_arguments:

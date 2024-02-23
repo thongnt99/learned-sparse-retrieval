@@ -3,7 +3,6 @@ defaults:
   - override /dataset@train_dataset: msmarco_doct5query_multiple_negative
   - override /loss: cross_entropy_loss 
   - override /model: deepimpact
-exp_name: deep_impact_original 
 train_dataset:
   train_group_size: 2
 

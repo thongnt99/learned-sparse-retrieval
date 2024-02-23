@@ -1,0 +1,12 @@
+# @package _global_
+defaults:
+  - override /dataset@train_dataset: msmarco_distil_nils 
+  - override /loss: triplet_distil_margin_mse
+  - override /model: splade_asm_qmlp
+loss:
+  q_regularizer:
+    _target_: lsr.losses.regularizer.L1
+    weight: 0
+  d_regularizer:
+    _target_: lsr.losses.regularizer.L1
+    weight: 0.001

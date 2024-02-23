@@ -4,8 +4,6 @@ defaults:
   - dataset@train_dataset: toy_triplets
   - loss: triplet_margin
   - wandb: defaults
-
-exp_name: 'toy_triplets'
 query_max_length: 250
 doc_max_length: 250
 tokenizer:
@@ -20,7 +18,6 @@ data_collator:
 
 training_arguments:
   _target_: transformers.TrainingArguments
-  output_dir: ./outputs/${exp_name}
   overwrite_output_dir: True 
   remove_unused_columns: False 
   do_train: True
@@ -38,7 +35,6 @@ training_arguments:
   report_to: wandb 
   dataloader_num_workers: 16
   dataloader_drop_last: True
-  run_name: ${exp_name}$
   ignore_data_skip: False
   ddp_find_unused_parameters: False
   seed: 42

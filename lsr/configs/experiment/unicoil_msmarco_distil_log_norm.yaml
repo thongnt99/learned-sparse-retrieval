@@ -1,0 +1,14 @@
+# @package _global_
+defaults:
+  - override /dataset@train_dataset: msmarco_distil_nils
+  - override /loss: triplet_distil_margin_mse_no_reg
+  - override /model: unicoil
+trainer: 
+  data_type: distil
+model:
+  query_encoder:
+    norm: 
+      _target_: lsr.utils.normact.Log1P
+  doc_encoder:
+    norm:
+      _target_: lsr.utils.normact.Log1P

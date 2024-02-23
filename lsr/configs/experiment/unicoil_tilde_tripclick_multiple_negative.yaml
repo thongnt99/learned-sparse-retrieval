@@ -3,8 +3,6 @@ defaults:
   - override /dataset@train_dataset: tripclick_tilde_triplets
   - override /loss: multiple_negative_loss
   - override /model: unicoil
-exp_name: unicoil_tilde_tripclick_multiple_negative 
-
 query_max_length: 250
 doc_max_length: 512
 data_collator:

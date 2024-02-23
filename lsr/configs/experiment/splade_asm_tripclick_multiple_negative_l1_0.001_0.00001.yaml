@@ -3,7 +3,6 @@ defaults:
   - override /dataset@train_dataset: tripclick_triplets
   - override /loss: multiple_negative_loss
   - override /model: splade_asm
-exp_name: splade_asm_tripclick_multiple_negative_0.001_0.00001
 query_max_length: 250
 doc_max_length: 512
 data_collator:

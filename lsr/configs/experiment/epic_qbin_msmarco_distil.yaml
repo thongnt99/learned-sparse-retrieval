@@ -3,4 +3,3 @@ defaults:
   - override /dataset@train_dataset: msmarco_triplet_distil
   - override /loss: distil_margin_mse
   - override /model: epic_qbin
-exp_name: epic_qbin_msmarco_distil

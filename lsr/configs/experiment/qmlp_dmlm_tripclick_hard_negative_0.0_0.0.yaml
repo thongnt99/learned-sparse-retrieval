@@ -3,7 +3,6 @@ defaults:
   - override /dataset@train_dataset: tripclick_triplets
   - override /loss: multiple_negative_loss 
   - override /model: qmlp_dmlm
-exp_name: qmlp_dmlm_triplick_hard_negative_0_0 
 query_max_length: 250
 doc_max_length: 512
 data_collator:

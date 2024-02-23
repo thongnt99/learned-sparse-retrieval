@@ -3,8 +3,6 @@ defaults:
   - override /dataset@train_dataset: msmarco_multiple_negative
   - override /loss: negative_likelihood 
   - override /model: epic
-exp_name: epic_original 
-
 train_dataset:
   train_group_size: 2
 

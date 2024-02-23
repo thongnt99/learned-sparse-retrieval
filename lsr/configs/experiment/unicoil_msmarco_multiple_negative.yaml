@@ -2,8 +2,7 @@
 defaults:
   - override /dataset@train_dataset: msmarco_multiple_negative
   - override /loss: multiple_negative_loss 
-  - override /model: unicoil
-exp_name: unicoil_msmarco_multiple_negative 
+  - override /model: unicoil 
 data_collator:
   _target_: lsr.datasets.data_collator.DataCollator
 training_arguments:

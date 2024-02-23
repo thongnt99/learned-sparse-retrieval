@@ -8,7 +8,7 @@ import subprocess
 from collections import defaultdict
 
 class AnseriniIndex:
-    def __init__(self, anserini_path, quantization_factor=100):
+    def __init__(self, anserini_path, quantization_factor=100, num_processes=18):
         self.anserini_path = anserini_path
         self.quantization_factor = quantization_factor
         self.anserini_tmp_dir = Path(tempfile.mkdtemp())
@@ -16,7 +16,8 @@ class AnseriniIndex:
         self.anserini_query_path = self.anserini_tmp_dir/"queries.tsv"
         self.anserini_index_dir = self.anserini_tmp_dir/"index"
         self.anserini_run_path = self.anserini_tmp_dir/"run.trec"
-        
+        self.num_processes = num_processes
+
     def index(self, doc_dir):
         # Read document representationa and quantize term weights
         print(f"Storing quantized documents to: {doc_dir}")
@@ -34,7 +35,7 @@ class AnseriniIndex:
                 -input {self.anserini_doc_dir}  
                 -index {self.anserini_index_dir}  
                 -generator SparseVectorDocumentGenerator 
-                -threads 18 
+                -threads {self.num_processes} 
                 -impact 
                 -pretokenized
                 """
@@ -59,7 +60,7 @@ class AnseriniIndex:
           -impact 
           -pretokenized 
           -hits 1000 
-          -parallelism 18"""
+          -parallelism {self.num_processes}"""
         process = subprocess.run(ANSERINI_RETRIEVE_COMMAND.split(), check=True)
         run = defaultdict(dict)
         trec_run = ir_measures.read_trec_run(self.anserini_run_path)

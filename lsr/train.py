@@ -6,9 +6,7 @@ from pprint import pprint
 import logging
 import wandb
 import os
-import datetime
 from hydra.core.hydra_config import HydraConfig
-
 logger = logging.getLogger(__name__)
 
 
@@ -16,8 +14,7 @@ logger = logging.getLogger(__name__)
 def train(conf: DictConfig):
     hydra_cfg = HydraConfig.get()
     experiment_name = hydra_cfg.runtime.choices["experiment"]
-    now = datetime.now()
-    run_name = f"{experiment_name}/{now.strftime('%m-%d-%Y')}"
+    run_name = f"{experiment_name}"
     output_dir = f"./outputs/{run_name}"
     with open_dict(conf):
         conf.training_arguments.output_dir = output_dir

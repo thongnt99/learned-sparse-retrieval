@@ -89,7 +89,7 @@ class SparseRep:
             size = self.dense.size()
             return (indices, values, size)
         elif self.format == SparseRep.SPARSE_FORMAT:
-            return (self.indices, self.values, self.size())
+            return (self.indices, self.values, self.size)
         else:
             raise Exception(f"sparse format {self.format} is not available")
 
@@ -111,7 +111,8 @@ class SparseRep:
                 exact_match = self.indices.unsqueeze(-1) == second.indices.unsqueeze(
                     -2
                 )  # BATCH_SIZE x FIRST_LENGTH x SECOND_LENGTH
-                score_mat = self.values.unsqueeze(-1) * second.values.unsqueeze(-2)
+                score_mat = self.values.unsqueeze(-1) * \
+                    second.values.unsqueeze(-2)
                 score_mat = score_mat * exact_match
                 return score_mat.max(dim=-1).values.sum(dim=-1)
         else:
@@ -134,7 +135,8 @@ class SparseRep:
                 )  # B_SIZE x A_SIZE x SEQ_LENGTH
                 selected_vals = second.dense.gather(1, ids)
                 selected_vals = selected_vals.view(
-                    second.dense.size(0), self.indices.size(0), self.indices.size(1)
+                    second.dense.size(0), self.indices.size(
+                        0), self.indices.size(1)
                 ).permute(
                     1, 2, 0
                 )  # A_SIZE x B_SIZE X SEQ_LENGTH

@@ -1,3 +1,10 @@
+from .cls_mlm import TransformerCLSMLPSparseEncoder, TransformerCLSMLMConfig
+from .mlm import (
+    TransformerMLMSparseEncoder,
+    TransformerMLMConfig,
+)
+from .mlp import TransformerMLPSparseEncoder, TransformerMLPConfig
+from .binary import BinaryEncoder, BinaryEncoderConfig
 from transformers import PreTrainedModel, AutoConfig, PretrainedConfig, AutoModel
 
 from lsr.models.sparse_encoder import SparseEncoder
@@ -82,14 +89,14 @@ class DualSparseEncoder(PreTrainedModel):
             else:
                 return self.doc_encoder(**docs)
 
-    def forward(self, loss, queries, docs_batch, labels=None):
+    def forward(self, loss, queries, doc_groups, labels=None, **kwargs):
         """Compute the loss given (queries, docs, labels)"""
         q_reps = self.encode_queries(**queries)
-        docs_batch_rep = self.encode_docs(**docs_batch)
+        doc_groups_rep = self.encode_docs(**doc_groups)
         if labels is None:
-            output = loss(q_reps, docs_batch_rep)
+            output = loss(q_reps, doc_groups_rep)
         else:
-            output = loss(q_reps, docs_batch_rep, labels)
+            output = loss(q_reps, doc_groups_rep, labels)
         return output
 
     def save_pretrained(self, model_dir):
@@ -114,17 +121,10 @@ class DualSparseEncoder(PreTrainedModel):
             query_encoder = AutoModel.from_pretrained(
                 model_dir_or_name + "/query_encoder"
             )
-            doc_encoder = AutoModel.from_pretrained(model_dir_or_name + "/doc_encoder")
+            doc_encoder = AutoModel.from_pretrained(
+                model_dir_or_name + "/doc_encoder")
             return cls(query_encoder, doc_encoder, config)
 
-
-from .binary import BinaryEncoder, BinaryEncoderConfig
-from .mlp import TransformerMLPSparseEncoder, TransformerMLPConfig
-from .mlm import (
-    TransformerMLMSparseEncoder,
-    TransformerMLMConfig,
-)
-from .cls_mlm import TransformerCLSMLPSparseEncoder, TransformerCLSMLMConfig
 
 AutoConfig.register("BINARY", BinaryEncoderConfig)
 AutoModel.register(BinaryEncoderConfig, BinaryEncoder)

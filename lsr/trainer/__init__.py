@@ -135,7 +135,7 @@ class HFTrainer(transformers.trainer.Trainer):
         num_partition = 60
         iter_per_patition = math.ceil(len(doc_dataloader)/num_partition)
         doc_iter = iter(doc_dataloader)
-        for part_idx in tqdm(list(range(num_partition)), desc="Encoding documents and saving raw weights to {docs_dir}"):
+        for part_idx in tqdm(list(range(num_partition)), desc=f"Encoding documents and saving raw weights to {docs_dir}"):
             docs_path = docs_dir/f"docs_{part_idx}.jsonl"
             with open(docs_path, "w") as fdoc:
                 for _ in range(iter_per_patition):

@@ -1,5 +1,6 @@
 from tqdm import tqdm
 import ir_datasets
+# import irds_robust_anserini
 import json
 from datasets import DownloadManager
 from collections import defaultdict
@@ -7,15 +8,27 @@ import gzip
 import pickle
 from pathlib import Path
 import requests
+import json
 import sys
 from datasets import load_dataset
-
-
+import numpy as np
+import pandas as pd
+import glob
+import torch
+import hashlib
+import copy
 IRDS_PREFIX = "irds:"
 HFG_PREFIX = "hfds:"
 
+in_mem_cache = {}
+
 
 def read_collection(collection_path: str, text_fields=["text"]):
+    cache_key = hashlib.md5(
+        ("read_collection::"+collection_path).encode()).hexdigest()
+    if cache_key in in_mem_cache:
+        print(f"Previosly read. Load {collection_path} from memory cache")
+        return in_mem_cache[cache_key]
     doc_dict = {}
     if collection_path.startswith(IRDS_PREFIX):
         irds_name = collection_path.replace(IRDS_PREFIX, "")
@@ -26,6 +39,7 @@ def read_collection(collection_path: str, text_fields=["text"]):
         ):
             doc_id = doc.doc_id
             texts = [getattr(doc, field) for field in text_fields]
+            texts = [text for text in texts if text is not None]
             text = " ".join(texts)
             doc_dict[doc_id] = text
     elif collection_path.startswith(HFG_PREFIX):
@@ -41,6 +55,7 @@ def read_collection(collection_path: str, text_fields=["text"]):
             for line in tqdm(f, desc=f"Reading doc collection from {collection_path}"):
                 doc_id, doc_text = line.strip().split("\t")
                 doc_dict[doc_id] = doc_text
+    in_mem_cache[cache_key] = doc_dict
     return doc_dict
 
 
@@ -54,32 +69,36 @@ def read_queries(queries_path: str, text_fields=["text"]):
             desc=f"Loading queries from ir_datasets: {queries_path}",
         ):
             query_id = query.query_id
-            texts = [getattr(query, field) for field in text_fields]
-            text = " ".join(texts)
-            queries.append((query_id, text))
+            if "wapo/v2/trec-news" in irds_name:
+                doc_id = query.doc_id
+                doc = dataset.docs_store().get(doc_id)
+                text = doc.title + " " + doc.body
+            else:
+                texts = [getattr(query, field) for field in text_fields]
+                text = " ".join(texts)
+            queries.append([query_id, text])
     else:
         with open(queries_path, "r") as f:
             for line in tqdm(f, desc=f"Reading queries from {queries_path}"):
                 query_id, query_text = line.strip().split("\t")
-                queries.append((query_id, query_text))
+                queries.append([query_id, query_text])
     return queries
 
 
 def read_qrels(qrels_path: str, rel_threshold=0):
-    qid2pos = {}
+    qid2pos = defaultdict(dict)
     if qrels_path.startswith(IRDS_PREFIX):
         irds_name = qrels_path.replace(IRDS_PREFIX, "")
         dataset = ir_datasets.load(irds_name)
         for qrel in dataset.qrels_iter():
-            if qrel.relevance > rel_threshold:
-                qid, did = qrel.query_id, qrel.doc_id
-                if not qid in qid2pos:
-                    qid2pos[qid] = []
-                qid2pos[qid].append(did)
+            # if qrel.relevance > rel_threshold:
+            qid, did = qrel.query_id, qrel.doc_id
+            qid2pos[qid][did] = qrel.relevance
     else:
         qrels = json.load(open(qrels_path, "r"))
         for qid in qrels:
-            qid2pos[str(qid)] = [str(did) for did in qrels[qid]]
+            qid2pos[str(qid)] = {str(did): qrels[qid][did]
+                                 for did in qrels[qid]}
     return qid2pos
 
 
@@ -89,6 +108,8 @@ file_map = {
 
 
 def read_ce_score(ce_path: str):
+    if ce_path.endswith(".json"):
+        return json.load(open(ce_path, "r"))
     if ce_path.startswith(HFG_PREFIX):
         hf_name = ce_path.replace(HFG_PREFIX, "")
         _url = file_map[hf_name]
@@ -110,7 +131,8 @@ def read_triplets(triplet_path: str):
         irds_name = triplet_path.replace(IRDS_PREFIX, "")
         dataset = ir_datasets.load(irds_name)
         for docpair in tqdm(
-            dataset.docpairs_iter(), f"Loading triplets from ir_datasets: {irds_name}"
+            dataset.docpairs_iter(
+            ), f"Loading triplets from ir_datasets: {irds_name}"
         ):
             qid, pos_id, neg_id = docpair.query_id, docpair.doc_id_a, docpair.doc_id_b
             triplets.append((qid, pos_id, neg_id))

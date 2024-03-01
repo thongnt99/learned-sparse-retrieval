@@ -68,5 +68,5 @@ hydra:
   job:
     chdir: False 
   run:
-    dir: ${training_arguments.output_dir}
+    dir: ./outputs/${now:%Y-%m-%d}/${now:%H-%M-%S}
 resume_from_checkpoint: False

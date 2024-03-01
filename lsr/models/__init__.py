@@ -93,7 +93,7 @@ class DualSparseEncoder(PreTrainedModel):
         """Compute the loss given (queries, docs, labels)"""
         q_reps = self.encode_queries(**queries)
         doc_group_reps = [self.encode_docs(
-            **doc_group, to_dense=False) for doc_group in doc_groups]
+            **doc_group, to_dense=True) for doc_group in doc_groups]
         # self.encode_docs(**doc_groups)
         if labels is None:
             output = loss(q_reps, *doc_group_reps)

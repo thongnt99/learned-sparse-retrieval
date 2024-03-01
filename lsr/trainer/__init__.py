@@ -112,6 +112,7 @@ class HFTrainer(transformers.trainer.Trainer):
             shutil.rmtree(docs_dir)
         if index_dir.is_dir():
             shutil.rmtree(index_dir)
+        docs_dir.mkdir()
         self.model.eval()
         qid2rep = defaultdict(dict)
         with open(queries_path, "w") as fquery:

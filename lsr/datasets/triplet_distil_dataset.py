@@ -66,9 +66,12 @@ class TripletIDDistilDataset(Dataset):
         score_list = [self.ce_score[q_id][doc1_id]]
         all_doc_ids = list(self.ce_score[q_id].keys())
         if len(all_doc_ids) < self.train_group_size - 1:
-            neg_doc_ids = random.choices(all_doc_ids, k=self.train_group_size - 1)
+            neg_doc_ids = random.choices(
+                all_doc_ids, k=self.train_group_size - 1)
         else:
-            neg_doc_ids = random.sample(all_doc_ids, k=self.train_group_size - 1)
+            neg_doc_ids = random.sample(
+                all_doc_ids, k=self.train_group_size - 1)
         doc_list.extend([self.doc_dict[doc_id] for doc_id in neg_doc_ids])
-        score_list.extend([self.ce_score[q_id][doc_id] for doc_id in neg_doc_ids])
-        return (q_text, doc_list, score_list)
+        score_list.extend([self.ce_score[q_id][doc_id]
+                          for doc_id in neg_doc_ids])
+        return {"query_id": q_id, "query_text": q_text, "doc_id": [doc1_id] + neg_doc_ids,  "doc_text": doc_list, "score": score_list}

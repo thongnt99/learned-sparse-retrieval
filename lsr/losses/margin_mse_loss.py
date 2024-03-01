@@ -68,7 +68,7 @@ class MarginMSELoss(Loss):
             "query reg": reg_q_output.detach(),
             "doc reg": reg_d_output.detach(),
             "query length": num_non_zero(q_reps),
-            "doc length": num_non_zero(d_reps),
+            "doc length": num_non_zero(p_reps),
             "loss_no_reg": mse_loss.detach(),
         }
         return (

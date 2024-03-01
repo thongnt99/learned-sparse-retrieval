@@ -24,7 +24,7 @@ def train(conf: DictConfig):
     pprint(resolved_conf)
     os.environ["WANDB_PROJECT"] = conf.wandb.setup.project
     wandb.init(
-        group=conf.exp_name,
+        group=run_name,
         job_type="train",
         config=resolved_conf,
         resume=conf.wandb.resume,

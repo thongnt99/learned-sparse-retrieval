@@ -168,8 +168,8 @@ class HFTrainer(transformers.trainer.Trainer):
 
     def evaluate(
             self,
-            eval_dataset,
-            ignore_keys,
+            eval_dataset=None,
+            ignore_keys=None,
             metric_key_prefix: str = "eval"):
         """
         Run evaluation and returns metrics.

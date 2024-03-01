@@ -1,0 +1,5 @@
+_target_: lsr.datasets.prediction_dataset.PredictionDataset
+docs_path: 'irds:msmarco-passage'
+queries_path: 'irds:msmarco-passage/dev/small'
+qrels_path:  'irds:msmarco-passage/dev/small'
+num_documents: -1

@@ -59,7 +59,7 @@ class TripletIDDistilDataset(Dataset):
     def __getitem__(self, idx):
         q_id, q_text = self.queries[idx]
         if q_id in self.qrels:
-            doc1_id = random.choice(self.qrels[q_id])
+            doc1_id = random.choice(list(self.qrels[q_id].keys()))
         else:
             doc1_id = random.choice(list(self.ce_score[q_id].keys()))
         doc_list = [self.doc_dict[doc1_id]]

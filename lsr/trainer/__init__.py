@@ -34,7 +34,7 @@ class HFTrainer(transformers.trainer.Trainer):
         self.index = index
 
     def _maybe_log_save_evaluate(
-        self, tr_loss, model, trial, epoch, ignore_keys_for_eval
+        self, tr_loss, grad_norm,   model, trial, epoch, ignore_keys_for_eval
     ):
         if self.control.should_log:
             log = {}
@@ -56,7 +56,7 @@ class HFTrainer(transformers.trainer.Trainer):
                 self.customed_log[metric] -= self.customed_log[metric]
             self.control.should_log = True
         super()._maybe_log_save_evaluate(
-            tr_loss, model, trial, epoch, ignore_keys_for_eval
+            tr_loss, grad_norm, model, trial, epoch, ignore_keys_for_eval
         )
 
     def _load_optimizer_and_scheduler(self, checkpoint):

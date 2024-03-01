@@ -44,12 +44,12 @@ training_arguments:
   seed: 42
 
 inference_arguments:
-  model_path: ${training_arguments.output_dir}/model
   input_path: data/toy-data/train_queries/raw.tsv
   input_format: tsv
   dataset: inference
   type: query
   output_dir: ${training_arguments.output_dir}/${inference_arguments.dataset}/${inference_arguments.type}
+  output_file: ???
   fp16: True
   input_max_length: 250
   top_k: -1

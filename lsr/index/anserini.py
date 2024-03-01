@@ -11,11 +11,10 @@ class AnseriniIndex:
     def __init__(self, anserini_path, quantization_factor=100, num_processes=18):
         self.anserini_path = anserini_path
         self.quantization_factor = quantization_factor
-        self.anserini_tmp_dir = Path(tempfile.mkdtemp())
+        self.anserini_tmp_dir = Path(tempfile.mkdtemp(prefix="anserini_lsr"))
         self.anserini_doc_dir = self.anserini_tmp_dir/"docs"
         self.anserini_query_path = self.anserini_tmp_dir/"queries.tsv"
         self.anserini_index_dir = self.anserini_tmp_dir/"index"
-        self.anserini_run_path = self.anserini_tmp_dir/"run.trec"
         self.num_processes = num_processes
 
     def index(self, raw_doc_dir):
@@ -57,7 +56,7 @@ class AnseriniIndex:
           -index {self.anserini_index_dir}  
           -topics {self.anserini_query_path} 
           -topicreader TsvString 
-          -output {self.anserini_run_path}  
+          -output {run_path}  
           -impact 
           -pretokenized 
           -hits 1000 

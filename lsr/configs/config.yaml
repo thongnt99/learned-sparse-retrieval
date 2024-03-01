@@ -16,6 +16,10 @@ data_collator:
   q_max_length: ${query_max_length}
   d_max_length: ${doc_max_length}
 
+index: 
+  _target_: lsr.index.AnseriniIndex
+  anserini_path: /projects/0/guse0488/anserini-lsr/target/appassembler/bin/IndexCollection
+
 training_arguments:
   _target_: transformers.TrainingArguments
   overwrite_output_dir: True 
@@ -56,6 +60,7 @@ inference_arguments:
 trainer: 
   _target_: lsr.trainer.HFTrainer
   model: ${model}
+  index: ${index}
   args: ${training_arguments}
   data_collator: ${data_collator}
   train_dataset: ${train_dataset}

@@ -18,15 +18,16 @@ class AnseriniIndex:
         self.anserini_run_path = self.anserini_tmp_dir/"run.trec"
         self.num_processes = num_processes
 
-    def index(self, doc_dir):
+    def index(self, raw_doc_dir):
         # Read document representationa and quantize term weights
-        print(f"Storing quantized documents to: {doc_dir}")
-        for idx, doc_file in tqdm(enumerate(glob(str(doc_dir)+"/*")), desc="Reading doc weights and quantize"):
+        print(f"Storing quantized documents to: {raw_doc_dir}")
+        for idx, doc_file in tqdm(enumerate(glob(str(raw_doc_dir)+"/*")), desc="Reading raw doc weights and quantize"):
             with open(doc_file) as fin, open(self.anserini_doc_dir/f"part_{idx}.jsonl", "w") as fout:
                 for line in fin:
                     raw_doc = json.loads(line)
                     quantized_vector = {
-                        term: int(weight*self.quantization_factor) for term, weight in raw_doc["vecotr"].items()}
+                        term: int(weight*self.quantization_factor) for term, weight in raw_doc["vector"].items()}
+                    quantized_vector = {w: v for w, v in quantized_vector.items() if v > 0}
                     quantized_doc = {
                         "id": raw_doc["id"], "vector": quantized_vector}
                     fout.write(json.dumps(quantized_doc)+"\n")
@@ -41,14 +42,14 @@ class AnseriniIndex:
                 """
         process = subprocess.run(ANSERINI_INDEX_COMMAND.split(), check=True)
 
-    def retrieve(self, query_path):
+    def retrieve(self, raw_query_path, run_path):
         # read and quantize
-        with open(query_path, "r") as fin, open(self.anserini_query_path, "w") as fout:
-            for line in tqdm(fin, desc="Reading queries and quantize"):
+        with open(raw_query_path, "r") as fin, open(self.anserini_query_path, "w") as fout:
+            for line in tqdm(fin, desc="Reading raw query weights and quantize"):
                 query = json.loads(line)
                 toks = []
                 for term in query["vector"]:
-                    reps = (query["vector"][term] * self.quantization_factor)
+                    reps = int(query["vector"][term] * self.quantization_factor)
                     toks.extend([term] * reps)
                 toks = " ".join(toks)
                 fout.write(f"{query["id"]}\t{toks}\n")
@@ -64,6 +65,4 @@ class AnseriniIndex:
         process = subprocess.run(ANSERINI_RETRIEVE_COMMAND.split(), check=True)
         run = defaultdict(dict)
         trec_run = ir_measures.read_trec_run(self.anserini_run_path)
-        for row in trec_run:
-            run[row.query_id][row.doc_id] = row.score 
         return run 

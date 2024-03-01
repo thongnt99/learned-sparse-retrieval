@@ -138,7 +138,7 @@ class HFTrainer(transformers.trainer.Trainer):
         for part_idx in tqdm(list(range(num_partition)), desc=f"Encoding documents and saving raw weights to {docs_dir}"):
             docs_path = docs_dir/f"docs_{part_idx}.jsonl"
             with open(docs_path, "w") as fdoc:
-                for _ in range(iter_per_patition):
+                for _ in tqdm(range(iter_per_patition), descing=f"Encoding parts: {part_idx+1}/{num_partition}"):
                     try:
                         batch_docs = next(doc_iter)
                         doc_ids = batch_docs["doc_ids"]

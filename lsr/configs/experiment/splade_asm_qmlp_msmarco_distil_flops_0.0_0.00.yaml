@@ -1,7 +1,7 @@
 # @package _global_
 defaults:
   - /dataset@eval_dataset: msmarco_dev_small
-  - /dataset@eval_dataset: msmarco_dev_small
+  - /dataset@test_dataset: msmarco_dev_small
   - override /dataset@train_dataset: msmarco_triplet_distil 
   - override /loss: distil_margin_mse
   - override /model: splade_asm_qmlp

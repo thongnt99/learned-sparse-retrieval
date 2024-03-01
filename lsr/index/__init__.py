@@ -1,1 +1,1 @@
-from anserini import AnseriniIndex
+from .anserini import AnseriniIndex

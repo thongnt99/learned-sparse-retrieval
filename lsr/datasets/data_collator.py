@@ -64,33 +64,59 @@ class DataCollator:
 
     def __call__(self, batch):
         batch_queries = []
+        batch_query_ids = []
         batch_docs = []
+        batch_docs_ids = []
         batch_scores = []
-        for (query, doc_group, *args) in batch:
-            batch_queries.append(query)
-            batch_docs.extend(doc_group)
-            if len(args) == 0:
-                continue
-            batch_scores.append(args[0])
-        tokenized_queries = self.tokenizer(
-            batch_queries,
-            padding=True,
-            truncation=True,
-            max_length=self.q_max_length,
-            return_tensors="pt",
-            return_special_tokens_mask=True,
-        )
-        tokenized_docs = self.tokenizer(
-            batch_docs,
-            padding=True,
-            truncation=True,
-            max_length=self.d_max_length,
-            return_tensors="pt",
-            return_special_tokens_mask=True,
-        )
+        for example in batch:
+            if "query_id" in example:
+                batch_query_ids.append(example["query_id"])
+            if "query_text" in example:
+                batch_queries.append(example["query_text"])
+            if "doc_id" in example:
+                batch_docs_ids.append(example["doc_id"])
+            if "doc_text" in example:
+                batch_docs.append(example["doc_text"])
+            if "score" in example:
+                batch_scores.append(example["score"])
+        if len(batch_queries) > 0:
+            tokenized_queries = self.tokenizer(
+                batch_queries,
+                padding=True,
+                truncation=True,
+                max_length=self.q_max_length,
+                return_tensors="pt",
+                return_special_tokens_mask=True,
+            )
+        else:
+            tokenized_queries = {}
+        if len(batch_docs) > 0:
+            if isinstance(batch_docs[0], list):
+                doc_groups = list(zip(*batch_docs))
+                tokenized_docs = [self.tokenizer(
+                    doc_group,
+                    padding=True,
+                    truncation=True,
+                    max_length=self.d_max_length,
+                    return_tensors="pt",
+                    return_special_tokens_mask=True,
+                ) for doc_group in doc_groups]
+            else:
+                tokenized_docs = self.tokenizer(
+                    batch_docs,
+                    padding=True,
+                    truncation=True,
+                    max_length=self.d_max_length,
+                    return_tensors="pt",
+                    return_special_tokens_mask=True,
+                )
+        else:
+            tokenized_docs = {}
         return {
-            "queries": dict(tokenized_queries),
-            "docs_batch": dict(tokenized_docs),
+            "queries": tokenized_queries,
+            "doc_groups": tokenized_docs,
+            "query_ids": batch_query_ids,
+            "doc_ids": batch_docs_ids,
             "labels": torch.tensor(batch_scores) if len(batch_scores) > 0 else None,
         }
 

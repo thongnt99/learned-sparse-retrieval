@@ -48,7 +48,6 @@ inference_arguments:
   input_format: tsv
   dataset: inference
   type: query
-  output_dir: ${training_arguments.output_dir}/${inference_arguments.dataset}/${inference_arguments.type}
   output_file: ???
   fp16: True
   input_max_length: 250

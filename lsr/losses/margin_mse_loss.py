@@ -57,7 +57,7 @@ class MarginMSELoss(Loss):
         reg_d_output = (
             torch.tensor(0.0, device=p_reps.device)
             if (self.d_regularizer is None)
-            else (self.d_regularizer(d_reps) + self.d_regularizer(n_reps)) / 2
+            else (self.d_regularizer(p_reps)*0.5 + self.d_regularizer(n_reps)*0.5 + self.d_regularizer(n_reps)) / 2
         )
         mse_loss = self.mse(distance, ce_distance)
         if not self.q_regularizer is None:

@@ -6,7 +6,7 @@ import ir_measures
 from pathlib import Path
 import subprocess
 from collections import defaultdict
-
+import shutil
 class AnseriniIndex:
     def __init__(self, anserini_path, quantization_factor=100, num_processes=18):
         self.anserini_path = anserini_path
@@ -20,6 +20,9 @@ class AnseriniIndex:
     def index(self, raw_doc_dir):
         # Read document representationa and quantize term weights
         print(f"Storing quantized documents to: {raw_doc_dir}")
+        if self.anserini_doc_dir.is_dir():
+            shutil.rmtree()
+        self.anserini_doc_dir.mkdir()
         for idx, doc_file in tqdm(enumerate(glob(str(raw_doc_dir)+"/*")), desc="Reading raw doc weights and quantize"):
             with open(doc_file) as fin, open(self.anserini_doc_dir/f"part_{idx}.jsonl", "w") as fout:
                 for line in fin:

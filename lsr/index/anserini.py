@@ -21,7 +21,7 @@ class AnseriniIndex:
         # Read document representationa and quantize term weights
         print(f"Storing quantized documents to: {raw_doc_dir}")
         if self.anserini_doc_dir.is_dir():
-            shutil.rmtree()
+            shutil.rmtree(self.anserini_doc_dir)
         self.anserini_doc_dir.mkdir()
         for idx, doc_file in tqdm(enumerate(glob(str(raw_doc_dir)+"/*")), desc="Reading raw doc weights and quantize"):
             with open(doc_file) as fin, open(self.anserini_doc_dir/f"part_{idx}.jsonl", "w") as fout:

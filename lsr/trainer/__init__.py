@@ -157,7 +157,7 @@ class HFTrainer(transformers.trainer.Trainer):
                             fdoc.write(json.dumps(doc_json)+"\n")
                     except:
                         pass
-        self.index.index(docs_dir, index_dir)
+        self.index.index(docs_dir)
         run = self.index.retrieve(queries_path, run_path)
         if qrels is None:
             metrics = {}

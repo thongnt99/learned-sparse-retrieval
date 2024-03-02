@@ -18,7 +18,7 @@ data_collator:
 
 index: 
   _target_: lsr.index.AnseriniIndex
-  anserini_path: /projects/0/guse0488/anserini-lsr/target/appassembler/bin/IndexCollection
+  anserini_path: /projects/0/guse0488/anserini-lsr
 
 training_arguments:
   _target_: transformers.TrainingArguments

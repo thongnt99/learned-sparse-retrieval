@@ -65,6 +65,5 @@ class AnseriniIndex:
           -hits 1000 
           -parallelism {self.num_processes}"""
         process = subprocess.run(ANSERINI_RETRIEVE_COMMAND.split(), check=True)
-        run = defaultdict(dict)
-        trec_run = ir_measures.read_trec_run(self.anserini_run_path)
-        return run 
+        trec_run = ir_measures.read_trec_run(run_path)
+        return trec_run 

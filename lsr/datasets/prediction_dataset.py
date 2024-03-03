@@ -37,7 +37,7 @@ class PredictionDataset:
                 rel_doc_ids.update(list(self.qrels[qid].keys()))
             to_sample_doc_ids = sorted(set(doc_ids).difference(rel_doc_ids))
             random.seed(42)
-            if num_documents > len(doc_ids):
+            if num_documents > len(rel_doc_ids):
                 num_sample = num_documents - len(rel_doc_ids)
                 random.shuffle(to_sample_doc_ids)
                 sample_ids = to_sample_doc_ids[:num_sample]

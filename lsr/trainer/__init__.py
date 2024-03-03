@@ -123,11 +123,13 @@ class HFTrainer(transformers.trainer.Trainer):
                         **self._prepare_inputs(batch_queries["queries"]), to_dense=False).to_sparse()
                     batch_query_tok_ids = batch_query_tok_ids.to(
                         "cpu").tolist()
+                    batch_query_tok = self.data_collator.tokenizer.convert_ids_to_tokens(
+                        batch_query_tok_ids)
                     batch_query_tok_weights = batch_query_tok_weights.to(
                         "cpu").tolist()
-                for qid, tokid_list, tokweight_list in zip(batch_query_ids, batch_query_tok_ids, batch_query_tok_weights):
-                    w2w = {str(tok_id): tok_weight for tok_id,
-                           tok_weight in zip(tokid_list, tokweight_list) if tok_weight > 0}
+                for qid, tok_list, tokweight_list in zip(batch_query_ids, batch_query_tok, batch_query_tok_weights):
+                    w2w = {tok: tok_weight for tok,
+                           tok_weight in zip(tok_list, tokweight_list) if tok_weight > 0}
                     row = {"id":  qid, "vector": w2w}
                     row = json.dumps(row)
                     fquery.write(row+"\n")
@@ -147,12 +149,14 @@ class HFTrainer(transformers.trainer.Trainer):
                                 **self._prepare_inputs(batch_docs["doc_groups"]), to_dense=False).to_sparse()
                             doc_tok_ids = doc_tok_ids.to(
                                 "cpu").tolist()
+                            doc_toks = self.data_collator.tokenizer.convert_ids_to_tokens(
+                                doc_tok_ids)
                             doc_tok_weights = doc_tok_weights.to(
                                 "cpu").tolist()
-                        for doc_id, tokid_list, tokweight_list in zip(doc_ids, doc_tok_ids, doc_tok_weights):
-                            tokid_list = [str(tokid) for tokid in tokid_list]
-                            vector = {tokid: tokweight for tokid,
-                                      tokweight in zip(tokid_list, tokweight_list) if tokweight > 0}
+                        for doc_id, tok_list, tokweight_list in zip(doc_ids, doc_toks, doc_tok_weights):
+                            # tokid_list = [str(tokid) for tokid in tokid_list]
+                            vector = {tok: tokweight for tok,
+                                      tokweight in zip(tok_list, tokweight_list) if tokweight > 0}
                             doc_json = {"id": doc_id, "vector": vector}
                             fdoc.write(json.dumps(doc_json)+"\n")
                     except:

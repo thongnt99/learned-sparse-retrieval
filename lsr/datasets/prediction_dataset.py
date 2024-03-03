@@ -45,5 +45,7 @@ class PredictionDataset:
             else:
                 doc_ids = rel_doc_ids
             doc_texts = [full_docs[did] for did in doc_ids]
+        print(
+            f"PredictionDataset: number of sampled documents - {len(doc_texts)}")
         self.docs = TextCollection(doc_ids, doc_texts, type="doc")
         self.queries = TextCollection(query_ids, query_texts, type="query")

@@ -40,4 +40,4 @@ def eval(conf: DictConfig):
 
 
 if __name__ == "__main__":
-    train()
+    eval()

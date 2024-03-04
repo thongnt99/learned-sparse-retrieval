@@ -20,6 +20,9 @@ def eval(conf: DictConfig):
     with open_dict(conf):
         conf.training_arguments.output_dir = output_dir
         conf.training_arguments.run_name = run_name
+        del conf.trainer.train_dataset
+        del conf.trainer.eval_dataset
+
     resolved_conf = OmegaConf.to_container(conf, resolve=True)
     resolved_conf = OmegaConf.to_container(conf, resolve=True)
     pprint(resolved_conf)

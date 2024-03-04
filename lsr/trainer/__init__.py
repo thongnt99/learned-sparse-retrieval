@@ -270,7 +270,7 @@ class HFTrainer(transformers.trainer.Trainer):
         start_time = time.time()
         run_path = self.args.output_dir + "/test_run.trec"
         test_run, metrics = self.evaluation_loop(
-            query_dataloader, doc_data_loader, test_dataset.qrels, run_path=run_path)
+            query_dataloader, doc_data_loader, test_dataset.qrels, run_file=run_path)
         metrics = {
             f"{metric_key_prefix}_{str(m)}": metrics[m] for m in metrics}
         metrics.update(

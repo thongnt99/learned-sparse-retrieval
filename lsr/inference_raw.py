@@ -1,7 +1,7 @@
 from pathlib import Path
 import argparse
 from lsr.models import SparseEncoder
-from transformer import AutoTokenizer
+from transformers import AutoTokenizer
 from tqdm import tqdm
 import torch
 import json

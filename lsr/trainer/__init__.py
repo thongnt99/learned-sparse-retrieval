@@ -98,23 +98,7 @@ class HFTrainer(transformers.trainer.Trainer):
                 resume_from_checkpoint).state_dict()
         )
 
-    def evaluation_loop(self, query_dataloader, doc_dataloader, qrels, run_file):
-        eval_dir = Path(self.args.output_dir)/"inference_float"
-        if not eval_dir.is_dir():
-            eval_dir.mkdir()
-        queries_path = eval_dir/"queries.jsonl"
-        docs_dir = eval_dir/"docs"
-        index_dir = eval_dir/"index"
-        run_path = eval_dir/run_file
-        if queries_path.is_file():
-            os.remove(queries_path)
-        if docs_dir.is_dir():
-            shutil.rmtree(docs_dir)
-        if index_dir.is_dir():
-            shutil.rmtree(index_dir)
-        docs_dir.mkdir()
-        self.model.eval()
-        qid2rep = defaultdict(dict)
+    def encode_queries(self, query_dataloader, queries_path):
         with open(queries_path, "w") as fquery:
             for batch_queries in tqdm(query_dataloader, desc=f"Encoding queries and saving raw weights to {queries_path}"):
                 batch_query_ids = batch_queries["query_ids"]
@@ -133,7 +117,8 @@ class HFTrainer(transformers.trainer.Trainer):
                     row = {"id":  qid, "vector": w2w}
                     row = json.dumps(row)
                     fquery.write(row+"\n")
-                    qid2rep[qid] = w2w
+
+    def encode_docs(self, doc_dataloader, docs_dir):
         num_partition = 60
         iter_per_patition = math.ceil(len(doc_dataloader)/num_partition)
         doc_iter = iter(doc_dataloader)
@@ -160,6 +145,25 @@ class HFTrainer(transformers.trainer.Trainer):
                             fdoc.write(json.dumps(doc_json)+"\n")
                     except:
                         pass
+
+    def evaluation_loop(self, query_dataloader, doc_dataloader, qrels, run_file):
+        eval_dir = Path(self.args.output_dir)/"inference_float"
+        if not eval_dir.is_dir():
+            eval_dir.mkdir()
+        queries_path = eval_dir/"queries.jsonl"
+        docs_dir = eval_dir/"docs"
+        index_dir = eval_dir/"index"
+        run_path = eval_dir/run_file
+        if queries_path.is_file():
+            os.remove(queries_path)
+        if docs_dir.is_dir():
+            shutil.rmtree(docs_dir)
+        if index_dir.is_dir():
+            shutil.rmtree(index_dir)
+        docs_dir.mkdir()
+        self.model.eval()
+        self.encode_queries(query_dataloader, queries_path)
+        self.encode_docs(doc_dataloader, docs_dir)
         self.index.index(docs_dir)
         run = self.index.retrieve(queries_path, run_path)
         if qrels is None:

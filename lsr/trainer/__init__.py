@@ -272,9 +272,9 @@ class HFTrainer(transformers.trainer.Trainer):
         print(
             f"Prediction docs: {len(test_dataset.docs)} with {len(doc_data_loader)} batches")
         start_time = time.time()
-        run_path = self.args.output_dir + "/test_run.trec"
+        run_file = "test_run.trec"
         test_run, metrics = self.evaluation_loop(
-            query_dataloader, doc_data_loader, test_dataset.qrels, run_file=run_path)
+            query_dataloader, doc_data_loader, test_dataset.qrels, run_file=run_file)
         metrics = {
             f"{metric_key_prefix}_{str(m)}": metrics[m] for m in metrics}
         metrics.update(

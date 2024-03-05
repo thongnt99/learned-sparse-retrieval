@@ -1,7 +1,7 @@
 from pathlib import Path
 import argparse
-from lsr.models import SparseEncoder
-from transformers import AutoTokenizer
+from lsr.models import *
+from transformers import AutoModel, AutoTokenizer
 from tqdm import tqdm
 import torch
 import json
@@ -30,7 +30,7 @@ def encode(model, text_ids, texts, tokenizer, batch_size, output_file_path, max_
         batch_ids = text_ids[idx: (idx+batch_size)]
         batch_texts = texts[idx: (idx+batch_size)]
         batch_inps = tokenizer(
-            batch_texts, max_length=max_length, return_tensors="pt", return_special_tokens_mask=True).to(device)
+            batch_texts, max_length=max_length, padding=True, truncation=True, return_tensors="pt", return_special_tokens_mask=True).to(device)
         with torch.no_grad(), torch.cuda.amp.autocast(enabled=fp16):
             reps = model(**batch_inps)
             batch_tok_ids, batch_tok_weights, _ = reps.to_sparse()
@@ -49,7 +49,7 @@ def encode(model, text_ids, texts, tokenizer, batch_size, output_file_path, max_
 
 
 if __name__ == "__main__":
-    model = SparseEncoder.from_pretrained(args.model).to(args.device)
+    model = AutoModel.from_pretrained(args.model).to(args.device)
     tokenizer = AutoTokenizer.from_pretrained(args.tokenizer)
     input_text_ids = []
     input_texts = []
@@ -59,4 +59,4 @@ if __name__ == "__main__":
             input_text_ids.append(text_id)
             input_texts.append(text)
     encode(model, text_ids=input_text_ids,
-           texts=input_texts, tokenizer=tokenizer, batch_size=args.batch_size, max_length=args.max_len, write_batch_size=args.write_batch_size, device=args.device)
+           texts=input_texts, tokenizer=tokenizer, batch_size=args.batch_size, output_file_path= args.output,  max_length=args.max_len, write_batch_size=args.write_batch_size, device=args.device)

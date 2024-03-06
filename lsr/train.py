@@ -53,6 +53,11 @@ def train(conf: DictConfig):
     trainer = instantiate(conf.trainer)
     trainer.train(conf.resume_from_checkpoint)
     trainer.save_model()
+    try:
+        test_dataset = instantiate(conf.test_dataset)
+        trainer.predict(test_dataset)
+    except:
+        print("Skipping evaluation on test set!")
     wandb.finish()
 
 

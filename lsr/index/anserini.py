@@ -9,14 +9,10 @@ from collections import defaultdict
 import shutil
 import os 
 class AnseriniIndex:
-    def __init__(self, anserini_path, quantization_factor=100, num_processes=18):
-        self.anserini_path = anserini_path
+    def __init__(self, anserini_lib_path, anserini_output_path, quantization_factor=100, num_processes=18):
+        self.anserini_path = anserini_lib_path
         self.quantization_factor = quantization_factor
-        anserini_rep_dir = os.getenv("ANSERINI_OUTPUT_PATH")
-        if anserini_rep_dir is None:
-            self.anserini_tmp_dir = Path(tempfile.mkdtemp(prefix="anserini_lsr"))
-        else:
-            self.anserini_tmp_dir = Path(anserini_rep_dir)
+        self.anserini_tmp_dir = Path(anserini_output_path)
         self.anserini_doc_dir = self.anserini_tmp_dir/"docs"
         self.anserini_query_path = self.anserini_tmp_dir/"queries.tsv"
         self.anserini_index_dir = self.anserini_tmp_dir/"index"

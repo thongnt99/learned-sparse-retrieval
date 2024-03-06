@@ -6,8 +6,11 @@ from pprint import pprint
 import logging
 import wandb
 import os
+from pathlib import Path
 from hydra.core.hydra_config import HydraConfig
 logger = logging.getLogger(__name__)
+
+LSR_OUTPUT_KEY = "LSR_OUTPUT_PATH"
 
 
 @hydra.main(version_base="1.2", config_path="configs", config_name="config")
@@ -15,7 +18,11 @@ def train(conf: DictConfig):
     hydra_cfg = HydraConfig.get()
     experiment_name = hydra_cfg.runtime.choices["experiment"]
     run_name = f"{experiment_name}"
-    output_dir = f"./outputs/{run_name}"
+    output_root = os.getenv(LSR_OUTPUT_KEY)
+    if output_root is not None:
+        output_dir = str(Path(output_root)/run_name)
+    else:
+        output_dir = f"./outputs/{run_name}"
     with open_dict(conf):
         conf.training_arguments.output_dir = output_dir
         conf.training_arguments.run_name = run_name

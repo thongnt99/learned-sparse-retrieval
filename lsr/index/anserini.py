@@ -46,6 +46,8 @@ class AnseriniIndex:
                 -impact 
                 -pretokenized
                 """
+        print("Indexing: ")
+        print(ANSERINI_INDEX_COMMAND)
         process = subprocess.run(ANSERINI_INDEX_COMMAND.split(), check=True)
 
     def retrieve(self, raw_query_path, run_path):
@@ -70,6 +72,8 @@ class AnseriniIndex:
           -pretokenized 
           -hits 1000 
           -parallelism {self.num_processes}"""
+        print("Retrieve:")
+        print(ANSERINI_RETRIEVE_COMMAND)
         process = subprocess.run(ANSERINI_RETRIEVE_COMMAND.split(), check=True)
         trec_run = ir_measures.read_trec_run(run_path)
         return trec_run

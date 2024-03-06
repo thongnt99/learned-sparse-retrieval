@@ -16,7 +16,7 @@ class AnseriniIndex:
         if anserini_rep_dir is None:
             self.anserini_tmp_dir = Path(tempfile.mkdtemp(prefix="anserini_lsr"))
         else:
-            self.anserini_tmp_dir = anserini_rep_dir
+            self.anserini_tmp_dir = Path(anserini_rep_dir)
         self.anserini_doc_dir = self.anserini_tmp_dir/"docs"
         self.anserini_query_path = self.anserini_tmp_dir/"queries.tsv"
         self.anserini_index_dir = self.anserini_tmp_dir/"index"

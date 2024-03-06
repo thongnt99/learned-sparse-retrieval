@@ -7,7 +7,9 @@ from pathlib import Path
 import subprocess
 from collections import defaultdict
 import shutil
-import os 
+import os
+
+
 class AnseriniIndex:
     def __init__(self, anserini_lib_path, anserini_output_path, quantization_factor=100, num_processes=18):
         self.anserini_path = anserini_lib_path
@@ -30,7 +32,8 @@ class AnseriniIndex:
                     raw_doc = json.loads(line)
                     quantized_vector = {
                         term: int(weight*self.quantization_factor) for term, weight in raw_doc["vector"].items()}
-                    quantized_vector = {w: v for w, v in quantized_vector.items() if v > 0}
+                    quantized_vector = {w: v for w,
+                                        v in quantized_vector.items() if v > 0}
                     quantized_doc = {
                         "id": raw_doc["id"], "vector": quantized_vector}
                     fout.write(json.dumps(quantized_doc)+"\n")
@@ -52,10 +55,12 @@ class AnseriniIndex:
                 query = json.loads(line)
                 toks = []
                 for term in query["vector"]:
-                    reps = int(query["vector"][term] * self.quantization_factor)
+                    reps = int(query["vector"][term] *
+                               self.quantization_factor)
                     toks.extend([term] * reps)
                 toks = " ".join(toks)
-                fout.write(f"{query["id"]}\t{toks}\n")
+                query_id = query["id"]
+                fout.write(f"{query_id}\t{toks}\n")
         ANSERINI_RETRIEVE_COMMAND = f"""{self.anserini_path}/target/appassembler/bin/SearchCollection
           -index {self.anserini_index_dir}  
           -topics {self.anserini_query_path} 
@@ -67,4 +72,4 @@ class AnseriniIndex:
           -parallelism {self.num_processes}"""
         process = subprocess.run(ANSERINI_RETRIEVE_COMMAND.split(), check=True)
         trec_run = ir_measures.read_trec_run(run_path)
-        return trec_run 
+        return trec_run

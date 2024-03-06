@@ -18,7 +18,8 @@ data_collator:
 
 index: 
   _target_: lsr.index.AnseriniIndex
-  anserini_path: /projects/0/guse0488/anserini-lsr
+  anserini_lib_path: /projects/0/guse0488/anserini-lsr
+  anserini_output_path: anserini-outputs
 
 training_arguments:
   _target_: transformers.TrainingArguments

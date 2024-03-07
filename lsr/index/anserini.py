@@ -75,5 +75,5 @@ class AnseriniIndex:
         print("Retrieve:")
         print(ANSERINI_RETRIEVE_COMMAND)
         process = subprocess.run(ANSERINI_RETRIEVE_COMMAND.split(), check=True)
-        trec_run = ir_measures.read_trec_run(run_path)
+        trec_run = ir_measures.read_trec_run(str(run_path))
         return trec_run

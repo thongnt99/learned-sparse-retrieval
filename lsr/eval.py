@@ -7,7 +7,11 @@ import logging
 import wandb
 import os
 from hydra.core.hydra_config import HydraConfig
+from pathlib import Path
 logger = logging.getLogger(__name__)
+
+LSR_OUTPUT_KEY = "LSR_OUTPUT_PATH"
+ANSERINI_OUTPUT_KEY = "ANSERINI_OUTPUT_PATH"
 
 
 @hydra.main(version_base="1.2", config_path="configs", config_name="config")
@@ -15,11 +19,25 @@ def eval(conf: DictConfig):
     hydra_cfg = HydraConfig.get()
     experiment_name = hydra_cfg.runtime.choices["experiment"]
     run_name = f"{experiment_name}"
-    output_dir = f"./outputs/{run_name}"
-    model_dir = f"{output_dir}/model"
+    output_root = os.getenv(LSR_OUTPUT_KEY)
+    if output_root is not None:
+        output_dir = Path(output_root)/run_name
+    else:
+        output_dir = Path("./outputs")/run_name
+    if not output_dir.is_dir():
+        output_dir.mkdir()
+    anserini_root = os.getenv(ANSERINI_OUTPUT_KEY)
+    if anserini_root is not None:
+        anserini_output_dir = Path(anserini_root)/experiment_name
+    else:
+        anserini_output_dir = Path("./anserini-outputs")/experiment_name
+    if not anserini_output_dir.is_dir():
+        anserini_output_dir.mkdir()
+
     with open_dict(conf):
-        conf.training_arguments.output_dir = output_dir
+        conf.training_arguments.output_dir = str(output_dir)
         conf.training_arguments.run_name = run_name
+        conf.index.anserini_output_path = str(anserini_output_dir)
         del conf.trainer.train_dataset
         del conf.trainer.eval_dataset
 

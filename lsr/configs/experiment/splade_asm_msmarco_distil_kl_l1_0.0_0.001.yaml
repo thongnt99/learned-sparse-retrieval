@@ -19,6 +19,6 @@ loss:
 training_arguments:
   evaluation_strategy: "steps"
   eval_steps: 100000
-  max_steps: 4000000
+  max_steps: 400000
   per_device_train_batch_size: 64
   per_device_eval_batch_size: 256

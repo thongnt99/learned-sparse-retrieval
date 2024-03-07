@@ -55,6 +55,7 @@ def eval(conf: DictConfig):
     logger.info(f"Working directiory: {os.getcwd()}")
     trainer = instantiate(conf.trainer)
     test_dataset = instantiate(conf.test_dataset)
+    model_dir = output_dir/"model"
     trainer._load_from_checkpoint(model_dir)
     trainer.predict(test_dataset)
     wandb.finish()

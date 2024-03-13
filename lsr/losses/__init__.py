@@ -1,3 +1,10 @@
+from .joint_kl_mse_loss import JointKLMSE
+from .distil_kl_loss import DistilKLLoss
+from .negative_likelihood import NegativeLikelihoodLoss
+from .cross_entropy_loss import CrossEntropyLoss
+from .term_mse_loss import TermMSELoss
+from .multiple_negative_loss import MultipleNegativeLoss
+from .margin_mse_loss import MarginMSELoss
 from abc import ABC
 from curses import A_DIM
 from torch import nn, Tensor
@@ -61,11 +68,3 @@ def num_non_zero(a: Tensor):
         the input tensor
     """
     return (a > 0).float().sum(dim=1).mean()
-
-
-from .margin_mse_loss import MarginMSELoss
-from .multiple_negative_loss import MultipleNegativeLoss
-from .term_mse_loss import TermMSELoss
-from .cross_entropy_loss import CrossEntropyLoss
-from .negative_likelihood import NegativeLikelihoodLoss
-from .distil_kl_loss import DistilKLLoss

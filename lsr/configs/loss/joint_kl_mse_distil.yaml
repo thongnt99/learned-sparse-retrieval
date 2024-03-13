@@ -1,0 +1,9 @@
+_target_: lsr.losses.JointKLMSE
+q_regularizer: 
+  _target_: lsr.losses.regularizer.L1
+  weight: 0.00
+  T: 50000
+d_regularizer:
+  _target_: lsr.losses.regularizer.L1
+  weight: 5e-4
+  T: 50000

@@ -13,8 +13,9 @@ from lsr.models.sparse_encoder import SparseEncoder
 class DualSparseConfig(PretrainedConfig):
     model_type = "DualEncoder"
 
-    def __init__(self, shared=False, **kwargs):
+    def __init__(self, shared=False, freeze_doc_encoder=False, **kwargs):
         self.shared = shared
+        self.freeze_doc_encoder = freeze_doc_encoder
         super().__init__(**kwargs)
 
 
@@ -51,7 +52,13 @@ class DualSparseEncoder(PreTrainedModel):
             self.encoder = query_encoder
         else:
             self.query_encoder = query_encoder
-            self.doc_encoder = doc_encoder
+            if type(doc_encoder, str):
+                self.doc_encoder = AutoModel.from_pretrained(doc_encoder)
+            else:
+                self.doc_encoder = doc_encoder
+            if self.config.freeze_doc_encoder:
+                for param in self.doc_encoder.parameters():
+                    param.requires_grad = False
 
     def encode_queries(self, to_dense=True, **queries):
         """

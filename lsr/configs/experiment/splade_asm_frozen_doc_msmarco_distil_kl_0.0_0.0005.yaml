@@ -1,0 +1,31 @@
+# @package _global_
+defaults:
+  - /dataset@eval_dataset: msmarco_dev_small
+  - /dataset@test_dataset: msmarco_dev_small
+  - override /dataset@train_dataset: msmarco_triplet_distil 
+  - override /loss: triplet_distil_kl
+  - override /model: splade_asm
+eval_dataset: 
+  num_documents: 200000
+trainer: 
+  eval_dataset: ${eval_dataset}
+model:
+  config:
+    _target_: lsr.models.DualSparseConfig
+    freeze_doc_encoder: True 
+  query_encoder: "lsr42/splade_asm_msmarco_distil_kl_l1_0.0_0.0005_query_encoder"
+  doc_encoder: "lsr42/splade_asm_msmarco_distil_kl_l1_0.0_0.0005_doc_encoder"
+
+loss:
+  q_regularizer:
+    _target_: lsr.losses.regularizer.L1
+    weight: 0.0
+  d_regularizer:
+    _target_: lsr.losses.regularizer.L1
+    weight: 0.0
+training_arguments:
+  evaluation_strategy: "steps"
+  eval_steps: 100000
+  max_steps: 400000
+  per_device_train_batch_size: 64
+  per_device_eval_batch_size: 256

@@ -51,7 +51,10 @@ class DualSparseEncoder(PreTrainedModel):
         if self.config.shared:
             self.encoder = query_encoder
         else:
-            self.query_encoder = query_encoder
+            if isinstance(query_encoder, str):
+                self.query_encoder = AutoModel.from_pretrained(query_encoder)
+            else:
+                self.query_encoder = query_encoder
             if isinstance(doc_encoder, str):
                 self.doc_encoder = AutoModel.from_pretrained(doc_encoder)
             else:
